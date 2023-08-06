@@ -8,6 +8,6 @@ contract ElectionTest is Test {
     Election public election;
 
     function setUp() public {
-        election = new Election(vm.addr(1));
+        election = new Election();
     }
 }

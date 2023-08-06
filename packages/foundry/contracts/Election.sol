@@ -7,8 +7,6 @@ import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Election is Ownable {
-    // Open zeppelin ownable contract
-    // https://docs.openzeppelin.com/contracts/4.x/api/access#Ownable
 
     bool isVotingOpen = false;
 
@@ -42,14 +40,14 @@ contract Election is Ownable {
     }
 
     function addCandidate(string memory _name, string memory _party) public onlyOwner {
-        candidatesCount++;
         candidates[candidatesCount] = Candidate(_name, _party, 0);
+        candidatesCount++;
         emit CandidateAdded(candidatesCount);
     }
 
     function vote(uint256 _candidateId) public isElectionActive {
         require(!voters[msg.sender], "You have already voted");
-        require(_candidateId > 0 && _candidateId <= candidatesCount, "Invalid candidate");
+        require(_candidateId <= candidatesCount, "Invalid candidate");
         voters[msg.sender] = true;
         candidates[_candidateId].voteCount++;
         emit VoteCast(msg.sender, _candidateId);
