@@ -7,7 +7,6 @@ import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Election is Ownable {
-
     bool isVotingOpen = false;
 
     struct Candidate {
@@ -22,7 +21,10 @@ contract Election is Ownable {
 
     event VoteCast(address indexed voter, uint256 indexed candidateId);
     event CandidateAdded(uint256 indexed candidateId);
-    event ElectionResult(uint256 indexed candidateId, uint256 indexed voteCount);
+    event ElectionResult(
+        uint256 indexed candidateId,
+        uint256 indexed voteCount
+    );
 
     modifier isElectionActive() {
         require(isVotingOpen, "Voting is not open");
@@ -39,7 +41,10 @@ contract Election is Ownable {
         isVotingOpen = false;
     }
 
-    function addCandidate(string memory _name, string memory _party) public onlyOwner {
+    function addCandidate(
+        string memory _name,
+        string memory _party
+    ) public onlyOwner {
         candidates[candidatesCount] = Candidate(_name, _party, 0);
         candidatesCount++;
         emit CandidateAdded(candidatesCount);
