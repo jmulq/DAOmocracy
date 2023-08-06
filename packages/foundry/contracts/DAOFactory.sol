@@ -3,33 +3,32 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./DAO.sol";
+import "./DAORegistry.sol";
 
 contract DAOFactory is Ownable {
-    address[] public deployedDAOs;
-    uint256 public daoCount;
+    DAORegistry public daoRegistry;
 
     event DAOCreated(address indexed daoAddress);
 
-    constructor() {
-        daoCount = 0;
+    constructor(address _registry) {
+        daoRegistry = DAORegistry(_registry);
     }
 
-    function createDAO(address _admin) public onlyOwner() {
+    function createDAO(address _admin) public onlyOwner {
         DAO dao = new DAO(_admin);
-        daoCount++;
+        daoRegistry.addDAO(address(dao));
         emit DAOCreated(address(dao));
     }
 
-    function createDAOWithMembers(address _admin, address[] memory _members) public onlyOwner {
+    function createDAOWithMembers(
+        address _admin,
+        address[] memory _members
+    ) public onlyOwner {
         DAO dao = new DAO(_admin);
         for (uint256 i = 0; i < _members.length; i++) {
             dao.addMember(_members[i]);
         }
-        daoCount++;
+        daoRegistry.addDAO(address(dao));
         emit DAOCreated(address(dao));
-    }
-
-    function getDeployedDAOs() public view returns (address[] memory) {
-        return deployedDAOs;
     }
 }
