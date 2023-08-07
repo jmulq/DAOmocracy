@@ -13,9 +13,18 @@ contract DAO is AccessControl {
     mapping(uint256 => Proposal) public proposals;
 
     uint256 public proposalsCount;
+    string public name;
+    string public description;
 
-    constructor(address _admin) {
+    constructor(
+        address _admin,
+        string memory _name,
+        string memory _description
+    ) {
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        name = _name;
+        description = _description;
     }
 
     function isMember(address _member) public view returns (bool) {

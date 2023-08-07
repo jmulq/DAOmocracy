@@ -14,17 +14,23 @@ contract DAOFactory is Ownable {
         daoRegistry = DAORegistry(_registry);
     }
 
-    function createDAO(address _admin) public onlyOwner {
-        DAO dao = new DAO(_admin);
+    function createDAO(
+        address _admin,
+        string memory _name,
+        string memory _description
+    ) public onlyOwner {
+        DAO dao = new DAO(_admin, _name, _description);
         daoRegistry.addDAO(address(dao));
         emit DAOCreated(address(dao));
     }
 
     function createDAOWithMembers(
         address _admin,
+        string memory _name,
+        string memory _description,
         address[] memory _members
     ) public onlyOwner {
-        DAO dao = new DAO(_admin);
+        DAO dao = new DAO(_admin, _name, _description);
         for (uint256 i = 0; i < _members.length; i++) {
             dao.addMember(_members[i]);
         }

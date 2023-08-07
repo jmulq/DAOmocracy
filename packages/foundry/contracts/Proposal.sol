@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./DAO.sol";
-
-contract Proposal is Ownable {
+contract Proposal {
     enum ProposalState {
         Active,
         Closed
@@ -60,7 +57,7 @@ contract Proposal is Ownable {
         state = ProposalState.Active;
     }
 
-    function vote(uint256 _optionId) public onlyOwner isProposalActive {
+    function vote(uint256 _optionId) public isProposalActive {
         require(!voters[msg.sender], "You have already voted");
         require(_optionId < options.length, "Invalid option");
         voters[msg.sender] = true;
@@ -68,7 +65,7 @@ contract Proposal is Ownable {
         emit ProposalVoteCast(msg.sender, _optionId);
     }
 
-    function closeProposal() public onlyOwner isProposalActive {
+    function closeProposal() public isProposalActive {
         isClosed = true;
         state = ProposalState.Closed;
         emit ProposalClosed();
