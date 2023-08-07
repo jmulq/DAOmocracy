@@ -1,0 +1,27 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: DAORegistry
+    network: optimism-goerli
+    source:
+      address: "0x678a1D3791412490F2599B8009429cB0FEbB257B"
+      abi: DAORegistry
+      startBlock: 13005297
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - DAOAdded
+        - DAORemoved
+      abis:
+        - name: DAORegistry
+          file: ./abis/DAORegistry.json
+      eventHandlers:
+        - event: DAOAdded(indexed address)
+          handler: handleDAOAdded
+        - event: DAORemoved(indexed address)
+          handler: handleDAORemoved
+      file: ./src/dao-registry.ts

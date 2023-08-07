@@ -1,0 +1,15 @@
+type DAOAdded @entity(immutable: true) {
+  id: Bytes!
+  daoAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DAORemoved @entity(immutable: true) {
+  id: Bytes!
+  daoAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

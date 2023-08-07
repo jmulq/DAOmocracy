@@ -1,0 +1,8 @@
+{
+  "optimism-goerli": {
+    "DAORegistry": {
+      "address": "0x678a1D3791412490F2599B8009429cB0FEbB257B",
+      "startBlock": 13005297
+    }
+  }
+}
