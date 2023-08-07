@@ -2,8 +2,8 @@
 src = 'contracts'
 out = 'out'
 libs = ['lib']
-remappings=['@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/']
-fs_permissions = [{ access = "read-write", path = "./"}]
+remappings = ['@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/']
+fs_permissions = [{ access = "read-write", path = "./" }]
 
 [rpc_endpoints]
 default_network = "http://127.0.0.1:8545"
@@ -22,7 +22,7 @@ gnosis = "https://rpc.gnosischain.com"
 chiado = "https://rpc.chiadochain.net"
 
 [etherscan]
-polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }
-goerli = { key = "${ETHERSCAN_API_KEY}" }
+optimismGoerli = { key = "${ ETHERSCAN_OPTIMISM_KEY }", url = "https://api-goerli-optimistic.etherscan.io/" }
+polygonMumbai = { key = "${ ETHERSCAN_MUMBAI_KEY }", url = "https://api-testnet.polygonscan.com/" }
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
