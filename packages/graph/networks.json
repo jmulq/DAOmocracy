@@ -3,6 +3,9 @@
     "DAORegistry": {
       "address": "0x678a1D3791412490F2599B8009429cB0FEbB257B",
       "startBlock": 13005297
+    },
+    "DAOFactory": {
+      "address": "0x21B73DD66D7C7BdFeC0E5c10B527cDdC34F57cdB"
     }
   }
 }

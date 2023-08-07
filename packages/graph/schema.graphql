@@ -1,3 +1,4 @@
+# TODO Registry stuff - may be able to remove
 type DAOAdded @entity(immutable: true) {
   id: Bytes!
   daoAddress: Bytes! # address
@@ -6,7 +7,15 @@ type DAOAdded @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
+# TODO Registry stuff - may be able to remove
 type DAORemoved @entity(immutable: true) {
+  id: Bytes!
+  daoAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type DAOCreated @entity(immutable: true) {
   id: Bytes!
   daoAddress: Bytes! # address
   blockNumber: BigInt!
