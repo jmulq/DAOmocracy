@@ -1,7 +1,11 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "_registry", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_registry",
+        "type": "address"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -40,9 +44,21 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_admin", "type": "address" },
-      { "internalType": "string", "name": "_name", "type": "string" },
-      { "internalType": "string", "name": "_description", "type": "string" }
+      {
+        "internalType": "address",
+        "name": "_admin",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      }
     ],
     "name": "createDAO",
     "outputs": [],
@@ -51,10 +67,26 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_admin", "type": "address" },
-      { "internalType": "string", "name": "_name", "type": "string" },
-      { "internalType": "string", "name": "_description", "type": "string" },
-      { "internalType": "address[]", "name": "_members", "type": "address[]" }
+      {
+        "internalType": "address",
+        "name": "_admin",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_members",
+        "type": "address[]"
+      }
     ],
     "name": "createDAOWithMembers",
     "outputs": [],
@@ -65,7 +97,11 @@
     "inputs": [],
     "name": "daoRegistry",
     "outputs": [
-      { "internalType": "contract DAORegistry", "name": "", "type": "address" }
+      {
+        "internalType": "contract DAORegistry",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -73,7 +109,13 @@
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -86,7 +128,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "newOwner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
     "name": "transferOwnership",
     "outputs": [],

@@ -1,4 +1,3 @@
-# TODO Registry stuff - may be able to remove
 type DAOAdded @entity(immutable: true) {
   id: Bytes!
   daoAddress: Bytes! # address
@@ -7,7 +6,6 @@ type DAOAdded @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-# TODO Registry stuff - may be able to remove
 type DAORemoved @entity(immutable: true) {
   id: Bytes!
   daoAddress: Bytes! # address
@@ -15,12 +13,32 @@ type DAORemoved @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
-type DAOCreated @entity(immutable: true) {
-  id: Bytes!
-  daoAddress: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+
+type DAORegistry @entity {
+  id: Bytes! # address
+  daos: [DAO!]! @derivedFrom(field: "daoRegistry")
+}
+
+type Election @entity {
+  id: Bytes! # address
+  candidates: [Candidate!] @derivedFrom(field: "election")
+  candidatesCount: BigInt!
+  voters: [Voter!] @derivedFrom(field: "election")
+  votersCount: BigInt!
+}
+
+type Candidate @entity {
+  id: ID! # election address + candidate ID
+  name: String!
+  party: String!
+  votes: BigInt!
+  election: Election!
+}
+
+type Voter @entity {
+  id: Bytes! # address
+  election: Election!
+  votedFor: ID! # candidate ID
 }
 
 type DAO @entity(immutable: true) {
@@ -32,7 +50,8 @@ type DAO @entity(immutable: true) {
   description: String!
   members: [MemberDao!] @derivedFrom(field: "dao")
   proposers: [ProposerDao!] @derivedFrom(field: "dao")
-  proposals: [Proposal!]! @derivedFrom(field: "dao")
+  proposals: [Proposal!] @derivedFrom(field: "dao")
+  daoRegistry: DAORegistry
 }
 
 type Member @entity {

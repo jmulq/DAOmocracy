@@ -7,7 +7,7 @@ import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Election is Ownable {
-    bool isVotingOpen = false;
+    bool public isVotingOpen = false;
 
     struct Candidate {
         string name;
@@ -46,8 +46,8 @@ contract Election is Ownable {
         string memory _party
     ) public onlyOwner {
         candidates[candidatesCount] = Candidate(_name, _party, 0);
-        candidatesCount++;
         emit CandidateAdded(candidatesCount);
+        candidatesCount++;
     }
 
     function vote(uint256 _candidateId) public isElectionActive {
