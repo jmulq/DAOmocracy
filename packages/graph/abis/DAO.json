@@ -5,6 +5,16 @@
         "internalType": "address",
         "name": "_admin",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
       }
     ],
     "stateMutability": "nonpayable",
@@ -16,11 +26,11 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "daoAddress",
+        "name": "member",
         "type": "address"
       }
     ],
-    "name": "DAOAdded",
+    "name": "MemberAdded",
     "type": "event"
   },
   {
@@ -29,11 +39,50 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "daoAddress",
+        "name": "member",
         "type": "address"
       }
     ],
-    "name": "DAORemoved",
+    "name": "MemberRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "proposalAddress",
+        "type": "address"
+      }
+    ],
+    "name": "ProposalCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "proposer",
+        "type": "address"
+      }
+    ],
+    "name": "ProposerAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "proposer",
+        "type": "address"
+      }
+    ],
+    "name": "ProposerRemoved",
     "type": "event"
   },
   {
@@ -126,7 +175,20 @@
   },
   {
     "inputs": [],
-    "name": "REGISTRAR_ROLE",
+    "name": "MEMBER_ROLE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "PROPOSER_ROLE",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -141,11 +203,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_dao",
+        "name": "_member",
         "type": "address"
       }
     ],
-    "name": "addDAO",
+    "name": "addMember",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -154,55 +216,69 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_registrar",
+        "name": "_proposer",
         "type": "address"
       }
     ],
-    "name": "addRegistrar",
+    "name": "addProposer",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "daoCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_proposalId",
         "type": "uint256"
       }
     ],
-    "name": "deployedDAOs",
-    "outputs": [
+    "name": "closeProposal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "internalType": "string",
+        "name": "_title",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "internalType": "enum Proposal.VotingType",
+        "name": "_votingType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_optionNames",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_optionDescriptions",
+        "type": "string[]"
       }
     ],
-    "stateMutability": "view",
+    "name": "createProposal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "getDeployedDAOs",
+    "name": "description",
     "outputs": [
       {
-        "internalType": "address[]",
+        "internalType": "string",
         "name": "",
-        "type": "address[]"
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -273,11 +349,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "_member",
         "type": "address"
       }
     ],
-    "name": "registrars",
+    "name": "isMember",
     "outputs": [
       {
         "internalType": "bool",
@@ -292,11 +368,120 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_dao",
+        "name": "",
         "type": "address"
       }
     ],
-    "name": "removeDAO",
+    "name": "members",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "membersCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "proposals",
+    "outputs": [
+      {
+        "internalType": "contract Proposal",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "proposalsCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "proposers",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "propsersCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_member",
+        "type": "address"
+      }
+    ],
+    "name": "removeMember",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -305,11 +490,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_registrar",
+        "name": "_proposer",
         "type": "address"
       }
     ],
-    "name": "removeRegistrar",
+    "name": "removeProposer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -367,6 +552,24 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_proposalId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_optionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "voteOnProposal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

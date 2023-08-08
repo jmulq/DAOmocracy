@@ -11,8 +11,6 @@ export function handleVoteCast(event: ProposalVoteCastEvent): void {
     .concat("-")
     .concat(event.params.optionId.toI32().toString());
 
-    log.info("optionId: ", [optionId]);
-
   let option = ProposalOption.load(optionId);
   if (!option) {
     log.error("Option not found for vote cast event", [
@@ -27,14 +25,14 @@ export function handleVoteCast(event: ProposalVoteCastEvent): void {
 }
 
 export function handleProposalClosed(event: ProposalClosedEvent): void {
-    let proposal = Proposal.load(event.address);
-    if (!proposal) {
-        log.error("Proposal not found for closed event", [
-            event.transaction.hash.toHexString(),
-            event.address.toHexString(),
-        ]);
-        return;
-    }
-    proposal.proposalState = "Closed";
-    proposal.save();
+  let proposal = Proposal.load(event.address);
+  if (!proposal) {
+    log.error("Proposal not found for closed event", [
+      event.transaction.hash.toHexString(),
+      event.address.toHexString(),
+    ]);
+    return;
+  }
+  proposal.proposalState = "Closed";
+  proposal.save();
 }

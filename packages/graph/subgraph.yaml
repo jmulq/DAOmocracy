@@ -3,6 +3,29 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
+    name: Election
+    network: optimism-goerli
+    source:
+      address: "0x70D3176AA4e32f6dCf4C5ba3Ef33A8CD3A5B8433"
+      abi: Election
+      startBlock: 13054498
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Election
+      abis:
+        - name: Election
+          file: ./abis/Election.json
+      eventHandlers:
+        - event: VoteCast(indexed address,indexed uint256)
+          handler: handleVoteCast
+        - event: CandidateAdded(indexed uint256)
+          handler: handleCandidateAdded
+      file: ./src/election.ts
+
+  - kind: ethereum
     name: DAORegistry
     network: optimism-goerli
     source:
@@ -22,8 +45,6 @@ dataSources:
       eventHandlers:
         - event: DAOAdded(indexed address)
           handler: handleDAOAdded
-        - event: DAORemoved(indexed address)
-          handler: handleDAORemoved
       file: ./src/dao-registry.ts
 
   - kind: ethereum

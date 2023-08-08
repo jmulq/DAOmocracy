@@ -121,7 +121,7 @@ export function handleProposerRemoved(event: ProposerRemovedEvent): void {
 }
 
 export function handleProposalCreated(event: ProposalCreatedEvent): void {
-    // Verify Proposal entity doesn't already exist
+  // Verify Proposal entity doesn't already exist
   let proposal = Proposal.load(event.params.proposalAddress);
   if (proposal !== null) return;
 
@@ -150,13 +150,12 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
   proposal.proposer = event.transaction.from;
   proposal.save();
 
-
   // Create ProposalOption entities
   let optionsLength = proposalContract.getOptionsLength();
 
   for (let i = 0; i < optionsLength.toI32(); i++) {
     let optionStruct = proposalContract.options(BigInt.fromI32(i));
-    let optionId =  proposal.id
+    let optionId = proposal.id
       .toHexString()
       .concat("-")
       .concat(i.toString());
@@ -168,7 +167,7 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     proposalOption.voteCount = optionStruct.getVoteCount();
     proposalOption.save();
   }
-  
+
   // Create Proposal template with address of Proposal instance
   ProposalTemplate.create(event.params.proposalAddress);
 }

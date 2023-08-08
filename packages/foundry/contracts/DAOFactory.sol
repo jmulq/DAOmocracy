@@ -20,8 +20,8 @@ contract DAOFactory is Ownable {
         string memory _description
     ) public onlyOwner {
         DAO dao = new DAO(_admin, _name, _description);
-        daoRegistry.addDAO(address(dao));
         emit DAOCreated(address(dao));
+        daoRegistry.addDAO(address(dao));
     }
 
     function createDAOWithMembers(
