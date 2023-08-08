@@ -61,14 +61,18 @@ templates:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - MemberAdded
-        - MemberRemoved
-        - ProposalCreated
-        - ProposerAdded
-        - ProposerRemoved
+        - DAO
+        - Member
+        - MemberDAO
+        - Proposer
+        - ProposerDAO
+        - Proposal
+        - ProposalOption
       abis:
         - name: DAO
           file: ./abis/DAO.json
+        - name: Proposal
+          file: ./abis/Proposal.json
       eventHandlers:
         - event: MemberAdded(indexed address)
           handler: handleMemberAdded
@@ -93,6 +97,7 @@ templates:
       language: wasm/assemblyscript
       entities:
         - Proposal
+        - ProposalOption
       abis:
         - name: Proposal
           file: ./abis/Proposal.json

@@ -156,7 +156,7 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
 
   for (let i = 0; i < optionsLength.toI32(); i++) {
     let optionStruct = proposalContract.options(BigInt.fromI32(i));
-    let optionId = event.address
+    let optionId =  proposal.id
       .toHexString()
       .concat("-")
       .concat(i.toString());
