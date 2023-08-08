@@ -1,0 +1,88 @@
+# TODO Registry stuff - may be able to remove
+type DAOAdded @entity(immutable: true) {
+  id: Bytes!
+  daoAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+# TODO Registry stuff - may be able to remove
+type DAORemoved @entity(immutable: true) {
+  id: Bytes!
+  daoAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+type DAOCreated @entity(immutable: true) {
+  id: Bytes!
+  daoAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DAO @entity(immutable: true) {
+  id: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  name: String!
+  description: String!
+  members: [MemberDao!] @derivedFrom(field: "dao")
+  proposers: [ProposerDao!] @derivedFrom(field: "dao")
+  proposals: [Proposal!]! @derivedFrom(field: "dao")
+}
+
+type Member @entity {
+  id: Bytes! # address
+  daos: [MemberDao!] @derivedFrom(field: "member")
+}
+
+type Proposer @entity {
+  id: Bytes! # address
+  daos: [ProposerDao!] @derivedFrom(field: "proposer")
+  proposals: [Proposal!]! @derivedFrom(field: "proposer")
+}
+
+type MemberDao @entity {
+  id: Bytes! # # Set to `member.id.concat(dao.id)`
+  member: Member!
+  dao: DAO!
+}
+
+type ProposerDao @entity {
+  id: Bytes! # # Set to `proposer.id.concat(dao.id)`
+  proposer: Proposer!
+  dao: DAO!
+}
+
+type Proposal @entity {
+  id: Bytes! # address
+  title: String!
+  description: String!
+  proposalState: ProposalState!
+  votingType: VotingType!
+  options: [ProposalOption!]! @derivedFrom(field: "proposal")
+  dao: DAO!
+  proposer: Proposer!
+}
+
+type ProposalOption @entity {
+  id: ID!
+  proposal: Proposal!
+  name: String!
+  description: String!
+  voteCount: BigInt!
+}
+
+enum ProposalState {
+  Active
+  Closed
+}
+
+enum VotingType {
+  OneToOne
+  Quadratic
+}

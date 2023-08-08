@@ -14,7 +14,6 @@ contract Proposal {
 
     string public title;
     string public description;
-    bool public isClosed;
     ProposalState public state;
 
     VotingType public votingType;
@@ -66,7 +65,6 @@ contract Proposal {
     }
 
     function closeProposal() public isProposalActive {
-        isClosed = true;
         state = ProposalState.Closed;
         emit ProposalClosed();
     }

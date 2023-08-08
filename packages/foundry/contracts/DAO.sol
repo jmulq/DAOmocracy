@@ -12,9 +12,17 @@ contract DAO is AccessControl {
     mapping(address => bool) public proposers;
     mapping(uint256 => Proposal) public proposals;
 
+    uint256 public membersCount;
+    uint256 public propsersCount;
     uint256 public proposalsCount;
     string public name;
     string public description;
+
+    event ProposalCreated(address indexed proposalAddress);
+    event MemberAdded(address indexed member);
+    event MemberRemoved(address indexed member);
+    event ProposerAdded(address indexed proposer);
+    event ProposerRemoved(address indexed proposer);
 
     constructor(
         address _admin,
@@ -34,18 +42,25 @@ contract DAO is AccessControl {
     function addMember(address _member) public onlyRole(DEFAULT_ADMIN_ROLE) {
         grantRole(MEMBER_ROLE, _member);
         members[_member] = true;
+        membersCount++;
+        emit MemberAdded(_member);
     }
 
     function addProposer(
         address _proposer
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(isMember(_proposer), "DAO: proposer must be a member");
         grantRole(PROPOSER_ROLE, _proposer);
         proposers[_proposer] = true;
+        propsersCount++;
+        emit ProposerAdded(_proposer);
     }
 
     function removeMember(address _member) public onlyRole(DEFAULT_ADMIN_ROLE) {
         revokeRole(MEMBER_ROLE, _member);
         members[_member] = false;
+        membersCount--;
+        emit MemberRemoved(_member);
     }
 
     function removeProposer(
@@ -53,6 +68,8 @@ contract DAO is AccessControl {
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         revokeRole(PROPOSER_ROLE, _proposer);
         proposers[_proposer] = false;
+        propsersCount--;
+        emit ProposerRemoved(_proposer);
     }
 
     function createProposal(
@@ -62,14 +79,16 @@ contract DAO is AccessControl {
         string[] memory _optionNames,
         string[] memory _optionDescriptions
     ) public onlyRole(PROPOSER_ROLE) {
-        proposals[proposalsCount] = new Proposal(
+        Proposal proposal = new Proposal(
             _title,
             _description,
             _votingType,
             _optionNames,
             _optionDescriptions
         );
+        proposals[proposalsCount] = proposal;
         proposalsCount++;
+        emit ProposalCreated(address(proposal));
     }
 
     function voteOnProposal(
