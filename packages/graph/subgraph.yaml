@@ -2,14 +2,13 @@ specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
-
   - kind: ethereum
     name: DAORegistry
     network: optimism-goerli
     source:
-      address: "0x678a1D3791412490F2599B8009429cB0FEbB257B"
+      address: "0xFE5bf7090ca401471F5420a6755f574A31eAef38"
       abi: DAORegistry
-      startBlock: 13005297
+      startBlock: 13049284
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -31,19 +30,75 @@ dataSources:
     name: DAOFactory
     network: optimism-goerli
     source:
-      address: "0x21B73DD66D7C7BdFeC0E5c10B527cDdC34F57cdB"
+      address: "0x1548Bd9C523Eaa0E93D6B8d1C6FAb81922aE9ec4"
       abi: DAOFactory
-      startBlock: 13005308
+      startBlock: 13049284
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - DAOCreated
+        - DAO
       abis:
+        - name: DAO
+          file: ./abis/DAO.json
         - name: DAOFactory
           file: ./abis/DAOFactory.json
       eventHandlers:
         - event: DAOCreated(indexed address)
           handler: handleDAOCreated
       file: ./src/dao-factory.ts
+
+templates:
+  - kind: ethereum
+    name: DAO
+    network: optimism-goerli
+    source:
+      abi: DAO
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - MemberAdded
+        - MemberRemoved
+        - ProposalCreated
+        - ProposerAdded
+        - ProposerRemoved
+      abis:
+        - name: DAO
+          file: ./abis/DAO.json
+      eventHandlers:
+        - event: MemberAdded(indexed address)
+          handler: handleMemberAdded
+        - event: MemberRemoved(indexed address)
+          handler: handleMemberRemoved
+        - event: ProposalCreated(indexed address)
+          handler: handleProposalCreated
+        - event: ProposerAdded(indexed address)
+          handler: handleProposerAdded
+        - event: ProposerRemoved(indexed address)
+          handler: handleProposerRemoved
+      file: ./src/dao.ts
+
+  - kind: ethereum
+    name: Proposal
+    network: optimism-goerli
+    source:
+      abi: Proposal
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Proposal
+      abis:
+        - name: Proposal
+          file: ./abis/Proposal.json
+      eventHandlers:
+        - event: ProposalVoteCast(indexed address,indexed uint256)
+          handler: handleVoteCast
+        - event: ProposalClosed()
+          handler: handleProposalClosed
+      file: ./src/proposal.ts
