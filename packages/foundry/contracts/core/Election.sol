@@ -50,11 +50,11 @@ contract Election is Ownable {
         candidatesCount++;
     }
 
-    function vote(uint256 _candidateId) public isElectionActive {
-        require(!voters[msg.sender], "You have already voted");
+    function vote(address _voter, uint256 _candidateId) public isElectionActive {
+        require(!voters[_voter], "You have already voted");
         require(_candidateId <= candidatesCount, "Invalid candidate");
-        voters[msg.sender] = true;
+        voters[_voter] = true;
         candidates[_candidateId].voteCount++;
-        emit VoteCast(msg.sender, _candidateId);
+        emit VoteCast(_voter, _candidateId);
     }
 }

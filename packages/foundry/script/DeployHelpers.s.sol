@@ -26,7 +26,7 @@ contract ScaffoldETHDeploy is Script {
             string memory mnemonic = abi.decode(mnemonicBytes, (string));
             return vm.deriveKey(mnemonic, 0);
         } else {
-            return vm.envUint("DEPLOYER_PRIVATE_KEY");
+            return vm.envUint("PRIVATE_KEY");
         }
     }
 
