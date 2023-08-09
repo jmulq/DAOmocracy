@@ -1,12 +1,20 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// Useful for debugging. Remove when deploying to a live network.
 import "forge-std/console.sol";
-
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../helpers/ByteHasher.sol";
+import "../interfaces/IWorldID.sol";
 
 contract Election is Ownable {
+    using ByteHasher for bytes;
+
+    error InvalidNullifier();
+    IWorldID internal immutable _worldId;
+    uint256 internal immutable _externalNullifier;
+    uint256 internal immutable _groupId = 1;
+    mapping(uint256 => bool) internal _nullifierHashes;
+
     bool public isVotingOpen = false;
 
     struct Candidate {
@@ -31,7 +39,16 @@ contract Election is Ownable {
         _;
     }
 
-    constructor() Ownable() {}
+    constructor(
+        IWorldID worldId,
+        string memory appId,
+        string memory actionId
+    ) Ownable() {
+        _worldId = worldId;
+        _externalNullifier = abi
+            .encodePacked(abi.encodePacked(appId).hashToField(), actionId)
+            .hashToField();
+    }
 
     function openVoting() public onlyOwner {
         isVotingOpen = true;
@@ -50,11 +67,34 @@ contract Election is Ownable {
         candidatesCount++;
     }
 
-    function vote(address _voter, uint256 _candidateId) public isElectionActive {
-        require(!voters[_voter], "You have already voted");
-        require(_candidateId <= candidatesCount, "Invalid candidate");
-        voters[_voter] = true;
-        candidates[_candidateId].voteCount++;
-        emit VoteCast(_voter, _candidateId);
+    function vote(
+        address voter,
+        uint256 candidateId,
+        address signal,
+        uint256 root,
+        uint256 nullifierHash,
+        uint256[8] calldata proof
+    ) public isElectionActive {
+        // World ID check
+        if (_nullifierHashes[nullifierHash]) revert InvalidNullifier();
+
+        // Backup check
+        require(!voters[voter], "You have already voted");
+        require(candidateId <= candidatesCount, "Invalid candidate");
+
+        _worldId.verifyProof(
+            root,
+            _groupId,
+            abi.encodePacked(signal).hashToField(),
+            nullifierHash,
+            _externalNullifier,
+            proof
+        );
+        _nullifierHashes[nullifierHash] = true;
+
+        voters[voter] = true;
+        candidates[candidateId].voteCount++;
+
+        emit VoteCast(voter, candidateId);
     }
 }
