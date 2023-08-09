@@ -51,7 +51,7 @@ async function getBalanceForEachNetwork(address) {
   }
 }
 async function main() {
-  const privateKey = process.env.DEPLOYER_PRIVATE_KEY;
+  const privateKey = process.env.PRIVATE_KEY;
 
   if (!privateKey) {
     console.log(

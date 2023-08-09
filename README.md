@@ -91,12 +91,12 @@ yarn deploy --network sepolia
 
 ```
 ALCHEMY_API_KEY="",
-DEPLOYER_PRIVATE_KEY=""
+PRIVATE_KEY=""
 ```
 
 The deployer account is the account that will deploy your contracts. Additionally, the deployer account will be used to execute any function calls that are part of your deployment script.
 
-You can generate a random account / private key with `yarn generate` or add the private key of your crypto wallet. `yarn generate` will create a random account and add the DEPLOYER_PRIVATE_KEY to the .env file. You can check the generated account with `yarn account`.
+You can generate a random account / private key with `yarn generate` or add the private key of your crypto wallet. `yarn generate` will create a random account and add the PRIVATE_KEY to the .env file. You can check the generated account with `yarn account`.
 
 3. Deploy your smart contract(s)
 

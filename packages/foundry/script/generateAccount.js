@@ -14,7 +14,7 @@ const setNewEnvConfig = (existingEnvConfig = {}) => {
 
   const newEnvConfig = {
     ...existingEnvConfig,
-    DEPLOYER_PRIVATE_KEY: randomWallet.privateKey,
+    PRIVATE_KEY: randomWallet.privateKey,
   };
 
   // Store in .env
@@ -32,7 +32,7 @@ async function main() {
 
   // .env file exists
   const existingEnvConfig = parse(fs.readFileSync(envFilePath).toString());
-  if (existingEnvConfig.DEPLOYER_PRIVATE_KEY) {
+  if (existingEnvConfig.PRIVATE_KEY) {
     console.log(
       "⚠️ You already have a deployer account. Check the packages/foundry/.env file"
     );
