@@ -3,18 +3,10 @@ pragma solidity ^0.8.0;
 
 import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../helpers/ByteHasher.sol";
-import "../interfaces/IWorldID.sol";
+import "../worldcoin/WorldIDVerifier.sol";
+import {IWorldID} from "../worldcoin/interfaces/IWorldID.sol";
 
-contract Election is Ownable {
-    using ByteHasher for bytes;
-
-    error InvalidNullifier();
-    IWorldID internal immutable _worldId;
-    uint256 internal immutable _externalNullifier;
-    uint256 internal immutable _groupId = 1;
-    mapping(uint256 => bool) internal _nullifierHashes;
-
+contract Election is Ownable, WorldIDVerifier {
     bool public isVotingOpen = false;
 
     struct Candidate {
@@ -43,12 +35,7 @@ contract Election is Ownable {
         IWorldID worldId,
         string memory appId,
         string memory actionId
-    ) Ownable() {
-        _worldId = worldId;
-        _externalNullifier = abi
-            .encodePacked(abi.encodePacked(appId).hashToField(), actionId)
-            .hashToField();
-    }
+    ) WorldIDVerifier(worldId, appId, actionId) Ownable() {}
 
     function openVoting() public onlyOwner {
         isVotingOpen = true;
@@ -75,22 +62,9 @@ contract Election is Ownable {
         uint256 nullifierHash,
         uint256[8] calldata proof
     ) public isElectionActive {
-        // World ID check
-        if (_nullifierHashes[nullifierHash]) revert InvalidNullifier();
-
-        // Backup check
+        _verifyWorldId(signal, root, nullifierHash, proof);
         require(!voters[voter], "You have already voted");
         require(candidateId <= candidatesCount, "Invalid candidate");
-
-        _worldId.verifyProof(
-            root,
-            _groupId,
-            abi.encodePacked(signal).hashToField(),
-            nullifierHash,
-            _externalNullifier,
-            proof
-        );
-        _nullifierHashes[nullifierHash] = true;
 
         voters[voter] = true;
         candidates[candidateId].voteCount++;

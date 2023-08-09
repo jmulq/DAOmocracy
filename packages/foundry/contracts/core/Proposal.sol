@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Proposal {
+import "../worldcoin/WorldIDVerifier.sol";
+import {IWorldID} from "../worldcoin/interfaces/IWorldID.sol";
+
+contract Proposal is WorldIDVerifier {
     enum ProposalState {
         Active,
         Closed
@@ -41,8 +44,11 @@ contract Proposal {
         string memory _description,
         VotingType _votingType,
         string[] memory _optionNames,
-        string[] memory _optionDescriptions
-    ) {
+        string[] memory _optionDescriptions,
+        IWorldID worldId,
+        string memory appId,
+        string memory actionId
+    ) WorldIDVerifier(worldId, appId, actionId) {
         require(
             _optionNames.length == _optionDescriptions.length,
             "Option names and descriptions must be the same length"
@@ -56,7 +62,15 @@ contract Proposal {
         state = ProposalState.Active;
     }
 
-    function vote(uint256 _optionId) public isProposalActive {
+    function vote(
+        uint256 _optionId,
+        address signal,
+        uint256 root,
+        uint256 nullifierHash,
+        uint256[8] calldata proof
+    ) public isProposalActive {
+        _verifyWorldId(signal, root, nullifierHash, proof);
+
         require(!voters[msg.sender], "You have already voted");
         require(_optionId < options.length, "Invalid option");
         voters[msg.sender] = true;

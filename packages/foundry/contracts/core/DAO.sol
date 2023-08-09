@@ -2,9 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Proposal.sol";
+import "../worldcoin/WorldIDVerifier.sol";
+import {IWorldID} from "../worldcoin/interfaces/IWorldID.sol";
 
-contract DAO is AccessControl {
+contract DAO is AccessControl, WorldIDVerifier {
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
     bytes32 public constant MEMBER_ROLE = keccak256("MEMBER_ROLE");
 
@@ -27,8 +30,11 @@ contract DAO is AccessControl {
     constructor(
         address _admin,
         string memory _name,
-        string memory _description
-    ) {
+        string memory _description,
+        IWorldID worldId,
+        string memory appId,
+        string memory actionId
+    ) WorldIDVerifier(worldId, appId, actionId) {
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         name = _name;
@@ -72,19 +78,39 @@ contract DAO is AccessControl {
         emit ProposerRemoved(_proposer);
     }
 
+    // TODO - Implement and test WorldIDVerification
     function createProposal(
         string memory _title,
         string memory _description,
         Proposal.VotingType _votingType,
         string[] memory _optionNames,
         string[] memory _optionDescriptions
-    ) public onlyRole(PROPOSER_ROLE) {
+    )
+        public
+        // address signal,
+        // uint256 root,
+        // uint256 nullifierHash,
+        // uint256[8] calldata proof
+        onlyRole(PROPOSER_ROLE)
+    {
+        // _verifyWorldId(signal, root, nullifierHash, proof);
+
+        string memory actionId = string.concat(
+            Strings.toHexString(address(this)),
+            "_",
+            "proposal",
+            Strings.toString(proposalsCount)
+        );
+
         Proposal proposal = new Proposal(
             _title,
             _description,
             _votingType,
             _optionNames,
-            _optionDescriptions
+            _optionDescriptions,
+            _worldId,
+            _appId,
+            actionId
         );
         proposals[proposalsCount] = proposal;
         proposalsCount++;
