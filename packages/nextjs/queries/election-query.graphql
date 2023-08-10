@@ -1,0 +1,17 @@
+query ElectionQuery {
+  elections {
+    id
+    candidates {
+      id
+      name
+      party
+      votes
+    }
+    candidatesCount
+    voters {
+      id
+      votedFor
+    }
+    votersCount
+  }
+}

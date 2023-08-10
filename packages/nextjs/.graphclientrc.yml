@@ -1,0 +1,8 @@
+sources:
+  - name: DAOmocracy
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.25
+
+documents:
+  - ./queries/election-query.graphql
