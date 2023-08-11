@@ -75,14 +75,14 @@ contract DAO is AccessControl {
     function createProposal(
         string memory _title,
         string memory _description,
-        Proposal.VotingType _votingType,
+        // Proposal.VotingType _votingType,
         string[] memory _optionNames,
         string[] memory _optionDescriptions
     ) public onlyRole(PROPOSER_ROLE) {
         Proposal proposal = new Proposal(
             _title,
             _description,
-            _votingType,
+            // _votingType,
             _optionNames,
             _optionDescriptions
         );

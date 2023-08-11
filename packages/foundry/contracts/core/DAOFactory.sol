@@ -34,7 +34,7 @@ contract DAOFactory is Ownable {
         for (uint256 i = 0; i < _members.length; i++) {
             dao.addMember(_members[i]);
         }
-        daoRegistry.addDAO(address(dao));
         emit DAOCreated(address(dao));
+        daoRegistry.addDAO(address(dao));
     }
 }

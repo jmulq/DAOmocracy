@@ -1,3 +1,35 @@
+## Core contract deployment
+
+1. DAORegistry + DAOFactory
+
+The registry should be deployed first, followed by the factory. Use the following script to achieve this:
+
+```shell
+forge script ./script/Deploy.s.sol:DeployRegAndFactory -vvv --broadcast --rpc-url optimismGoerli --sig "run()"
+```
+
+2. DAO deployment
+
+```shell
+forge script ./script/Deploy.s.sol:DeployDAO -vvv --broadcast --rpc-url optimismGoerli --sig "run(address,string,string)" -- <FACTORY_ADDRESS> <NAME> <DESCRIPTION>
+```
+
+3. AddMembersToDao
+
+Set env vars before running.
+
+```shell
+forge script ./script/Deploy.s.sol:AddMembersToDAO -vvv --broadcast --rpc-url optimismGoerli --sig "run(address)" -- <DAO>
+```
+
+4. CreateDAOProposal
+
+Set env vars before running.
+
+```shell
+forge script ./script/Deploy.s.sol:CreateDAOProposal -vvv --broadcast --rpc-url optimismGoerli --sig "run(address)" -- <DAO> <TITLE> <DESCRIPTION>
+```
+
 ## CCIP
 
 1. To deploy DestinationVoter, and Election with candidates added, run the following script (change network name following `SupportedNetworks` type in [`Helper.sol`](./script/ccip/Helper.sol)):

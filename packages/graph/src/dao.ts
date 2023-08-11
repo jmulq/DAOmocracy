@@ -140,12 +140,12 @@ export function handleProposalCreated(event: ProposalCreatedEvent): void {
     proposal.proposalState = "Closed";
   }
 
-  let votingType = proposalContract.votingType();
-  if (votingType === 0) {
-    proposal.votingType = "OneToOne";
-  } else if (votingType === 1) {
-    proposal.votingType = "Quadratic";
-  }
+  // let votingType = proposalContract.votingType();
+  // if (votingType === 0) {
+  //   proposal.votingType = "OneToOne";
+  // } else if (votingType === 1) {
+  //   proposal.votingType = "Quadratic";
+  // }
   proposal.dao = event.address;
   proposal.proposer = event.transaction.from;
   proposal.save();

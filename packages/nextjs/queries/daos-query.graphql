@@ -1,0 +1,32 @@
+query DAOSQuery {
+  daos {
+    id
+    name
+    description
+    members {
+      member {
+        id
+      }
+    }
+    proposals {
+      id
+      title
+      description
+      proposalState
+      options {
+        id
+        name
+        description
+        voteCount
+      }
+      proposer {
+        id
+      }
+    }
+    proposers {
+      proposer {
+        id
+      }
+    }
+  }
+}

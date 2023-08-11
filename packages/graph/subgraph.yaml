@@ -6,9 +6,9 @@ dataSources:
     name: Election
     network: optimism-goerli
     source:
-      address: "0x70D3176AA4e32f6dCf4C5ba3Ef33A8CD3A5B8433"
+      address: "0x5b71Fc551a4c32E317350961FFb6C41769f09C03"
       abi: Election
-      startBlock: 13054498
+      startBlock: 13120325
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -29,9 +29,9 @@ dataSources:
     name: DAORegistry
     network: optimism-goerli
     source:
-      address: "0xFE5bf7090ca401471F5420a6755f574A31eAef38"
+      address: "0x8cd01fd990C36CB34F99eA661b27b0a60f38f58f"
       abi: DAORegistry
-      startBlock: 13049284
+      startBlock: 13159918
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -51,9 +51,9 @@ dataSources:
     name: DAOFactory
     network: optimism-goerli
     source:
-      address: "0x1548Bd9C523Eaa0E93D6B8d1C6FAb81922aE9ec4"
+      address: "0xd30Df989D50bb89d3BF2f827E0B3880D623a2B6E"
       abi: DAOFactory
-      startBlock: 13049284
+      startBlock: 13159918
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

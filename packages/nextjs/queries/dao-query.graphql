@@ -1,0 +1,19 @@
+query DAOQuery($daoId: ID!) {
+  dao(id: $daoId) {
+    id
+    name
+    description
+    members{
+      id
+    }
+    proposers {
+      id
+    }
+    proposals {
+      id
+      title
+      description
+      proposalState
+    }
+  }
+}
