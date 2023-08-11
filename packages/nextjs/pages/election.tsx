@@ -56,15 +56,13 @@ const Election: NextPage = () => {
   if (isSuccess) {
     buttonText = "Voted!";
   }
-  console.log("data", data);
 
   return (
     <>
       <h2 className="text-2xl font-bold text-left mb-2">Cast your vote in the National Election</h2>
 
       <div className="flex">
-        {/* Left Side: Candidate Cards */}
-        <div className="w-2/5 grid grid-cols-2 gap-4 cursor-pointer">
+        <div className="w-2/5 grid grid-cols-2 gap-4">
           {data.elections[0].candidates.map((c, i) => {
             return (
               <CandidateCard

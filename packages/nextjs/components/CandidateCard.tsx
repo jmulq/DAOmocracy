@@ -9,9 +9,8 @@ type CandidateCardProps = {
 };
 
 const CandidateCard = ({ candidate, imageSource, onClick }: CandidateCardProps) => {
-  console.log("imageSource", imageSource);
   return (
-    <div className="bg-white shadow rounded-lg flex flex-col h-fit" onClick={onClick}>
+    <div className="bg-white shadow rounded-lg flex flex-col h-fit cursor-pointer" onClick={onClick}>
       <Image
         className="rounded-t-lg"
         about="candidate image"
