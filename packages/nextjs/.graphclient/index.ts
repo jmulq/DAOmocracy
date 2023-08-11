@@ -679,7 +679,6 @@ export type Proposal = {
   title: Scalars['String'];
   description: Scalars['String'];
   proposalState: ProposalState;
-  votingType: VotingType;
   options: Array<ProposalOption>;
   dao: DAO;
   proposer: Proposer;
@@ -793,7 +792,6 @@ export type ProposalOption_orderBy =
   | 'proposal__title'
   | 'proposal__description'
   | 'proposal__proposalState'
-  | 'proposal__votingType'
   | 'name'
   | 'description'
   | 'voteCount';
@@ -857,10 +855,6 @@ export type Proposal_filter = {
   proposalState_not?: InputMaybe<ProposalState>;
   proposalState_in?: InputMaybe<Array<ProposalState>>;
   proposalState_not_in?: InputMaybe<Array<ProposalState>>;
-  votingType?: InputMaybe<VotingType>;
-  votingType_not?: InputMaybe<VotingType>;
-  votingType_in?: InputMaybe<Array<VotingType>>;
-  votingType_not_in?: InputMaybe<Array<VotingType>>;
   options_?: InputMaybe<ProposalOption_filter>;
   dao?: InputMaybe<Scalars['String']>;
   dao_not?: InputMaybe<Scalars['String']>;
@@ -915,7 +909,6 @@ export type Proposal_orderBy =
   | 'title'
   | 'description'
   | 'proposalState'
-  | 'votingType'
   | 'options'
   | 'dao'
   | 'dao__id'
@@ -1652,10 +1645,6 @@ export type Voter_orderBy =
   | 'election__votersCount'
   | 'votedFor';
 
-export type VotingType =
-  | 'OneToOne'
-  | 'Quadratic';
-
 export type _Block_ = {
   /** The hash of the block */
   hash?: Maybe<Scalars['Bytes']>;
@@ -1827,7 +1816,6 @@ export type ResolversTypes = ResolversObject<{
   Voter: ResolverTypeWrapper<Voter>;
   Voter_filter: Voter_filter;
   Voter_orderBy: Voter_orderBy;
-  VotingType: VotingType;
   _Block_: ResolverTypeWrapper<_Block_>;
   _Meta_: ResolverTypeWrapper<_Meta_>;
   _SubgraphErrorPolicy_: _SubgraphErrorPolicy_;
@@ -1984,7 +1972,6 @@ export type ProposalResolvers<ContextType = MeshContext, ParentType extends Reso
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   proposalState?: Resolver<ResolversTypes['ProposalState'], ParentType, ContextType>;
-  votingType?: Resolver<ResolversTypes['VotingType'], ParentType, ContextType>;
   options?: Resolver<Array<ResolversTypes['ProposalOption']>, ParentType, ContextType, RequireFields<ProposaloptionsArgs, 'skip' | 'first'>>;
   dao?: Resolver<ResolversTypes['DAO'], ParentType, ContextType>;
   proposer?: Resolver<ResolversTypes['Proposer'], ParentType, ContextType>;
@@ -2171,7 +2158,7 @@ const daOmocracyTransforms = [];
 const additionalTypeDefs = [] as any[];
 const daOmocracyHandler = new GraphqlHandler({
               name: "DAOmocracy",
-              config: {"endpoint":"https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.25"},
+              config: {"endpoint":"https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.30"},
               baseDir,
               cache,
               pubsub,
@@ -2205,11 +2192,29 @@ const merger = new(BareMerger as any)({
     get documents() {
       return [
       {
+        document: DaoQueryDocument,
+        get rawSDL() {
+          return printWithCache(DaoQueryDocument);
+        },
+        location: 'DaoQueryDocument.graphql'
+      },{
+        document: DaosQueryDocument,
+        get rawSDL() {
+          return printWithCache(DaosQueryDocument);
+        },
+        location: 'DaosQueryDocument.graphql'
+      },{
         document: ElectionQueryDocument,
         get rawSDL() {
           return printWithCache(ElectionQueryDocument);
         },
         location: 'ElectionQueryDocument.graphql'
+      },{
+        document: ProposalQueryDocument,
+        get rawSDL() {
+          return printWithCache(ProposalQueryDocument);
+        },
+        location: 'ProposalQueryDocument.graphql'
       }
     ];
     },
@@ -2248,6 +2253,27 @@ export function getBuiltGraphSDK<TGlobalContext = any, TOperationContext = any>(
   const sdkRequester$ = getBuiltGraphClient().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
   return getSdk<TOperationContext, TGlobalContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
 }
+export type DAOQueryQueryVariables = Exact<{
+  daoId: Scalars['ID'];
+}>;
+
+
+export type DAOQueryQuery = { dao?: Maybe<(
+    Pick<DAO, 'id' | 'name' | 'description'>
+    & { members?: Maybe<Array<Pick<MemberDao, 'id'>>>, proposers?: Maybe<Array<Pick<ProposerDao, 'id'>>>, proposals?: Maybe<Array<Pick<Proposal, 'id' | 'title' | 'description' | 'proposalState'>>> }
+  )> };
+
+export type DAOSQueryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DAOSQueryQuery = { daos: Array<(
+    Pick<DAO, 'id' | 'name' | 'description'>
+    & { members?: Maybe<Array<{ member: Pick<Member, 'id'> }>>, proposals?: Maybe<Array<(
+      Pick<Proposal, 'id' | 'title' | 'description' | 'proposalState'>
+      & { options: Array<Pick<ProposalOption, 'id' | 'name' | 'description' | 'voteCount'>>, proposer: Pick<Proposer, 'id'> }
+    )>>, proposers?: Maybe<Array<{ proposer: Pick<Proposer, 'id'> }>> }
+  )> };
+
 export type ElectionQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2256,7 +2282,75 @@ export type ElectionQueryQuery = { elections: Array<(
     & { candidates?: Maybe<Array<Pick<Candidate, 'id' | 'name' | 'party' | 'votes'>>>, voters?: Maybe<Array<Pick<Voter, 'id' | 'votedFor'>>> }
   )> };
 
+export type ProposalQueryQueryVariables = Exact<{
+  proposalId: Scalars['ID'];
+}>;
 
+
+export type ProposalQueryQuery = { proposal?: Maybe<(
+    Pick<Proposal, 'id' | 'title' | 'description' | 'proposalState'>
+    & { options: Array<Pick<ProposalOption, 'id' | 'name' | 'description' | 'voteCount'>>, dao: (
+      Pick<DAO, 'id' | 'name' | 'description'>
+      & { members?: Maybe<Array<{ member: Pick<Member, 'id'> }>> }
+    ), proposer: Pick<Proposer, 'id'> }
+  )> };
+
+
+export const DAOQueryDocument = gql`
+    query DAOQuery($daoId: ID!) {
+  dao(id: $daoId) {
+    id
+    name
+    description
+    members {
+      id
+    }
+    proposers {
+      id
+    }
+    proposals {
+      id
+      title
+      description
+      proposalState
+    }
+  }
+}
+    ` as unknown as DocumentNode<DAOQueryQuery, DAOQueryQueryVariables>;
+export const DAOSQueryDocument = gql`
+    query DAOSQuery {
+  daos {
+    id
+    name
+    description
+    members {
+      member {
+        id
+      }
+    }
+    proposals {
+      id
+      title
+      description
+      proposalState
+      options {
+        id
+        name
+        description
+        voteCount
+      }
+      proposer {
+        id
+      }
+    }
+    proposers {
+      proposer {
+        id
+      }
+    }
+  }
+}
+    ` as unknown as DocumentNode<DAOSQueryQuery, DAOSQueryQueryVariables>;
 export const ElectionQueryDocument = gql`
     query ElectionQuery {
   elections {
@@ -2276,13 +2370,54 @@ export const ElectionQueryDocument = gql`
   }
 }
     ` as unknown as DocumentNode<ElectionQueryQuery, ElectionQueryQueryVariables>;
+export const ProposalQueryDocument = gql`
+    query ProposalQuery($proposalId: ID!) {
+  proposal(id: $proposalId) {
+    id
+    title
+    description
+    proposalState
+    options {
+      id
+      name
+      description
+      voteCount
+    }
+    dao {
+      id
+      name
+      description
+      members {
+        member {
+          id
+        }
+      }
+    }
+    proposer {
+      id
+    }
+  }
+}
+    ` as unknown as DocumentNode<ProposalQueryQuery, ProposalQueryQueryVariables>;
+
+
+
 
 
 export type Requester<C = {}, E = unknown> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R> | AsyncIterable<R>
 export function getSdk<C, E>(requester: Requester<C, E>) {
   return {
+    DAOQuery(variables: DAOQueryQueryVariables, options?: C): Promise<DAOQueryQuery> {
+      return requester<DAOQueryQuery, DAOQueryQueryVariables>(DAOQueryDocument, variables, options) as Promise<DAOQueryQuery>;
+    },
+    DAOSQuery(variables?: DAOSQueryQueryVariables, options?: C): Promise<DAOSQueryQuery> {
+      return requester<DAOSQueryQuery, DAOSQueryQueryVariables>(DAOSQueryDocument, variables, options) as Promise<DAOSQueryQuery>;
+    },
     ElectionQuery(variables?: ElectionQueryQueryVariables, options?: C): Promise<ElectionQueryQuery> {
       return requester<ElectionQueryQuery, ElectionQueryQueryVariables>(ElectionQueryDocument, variables, options) as Promise<ElectionQueryQuery>;
+    },
+    ProposalQuery(variables: ProposalQueryQueryVariables, options?: C): Promise<ProposalQueryQuery> {
+      return requester<ProposalQueryQuery, ProposalQueryQueryVariables>(ProposalQueryDocument, variables, options) as Promise<ProposalQueryQuery>;
     }
   };
 }

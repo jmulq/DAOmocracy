@@ -8682,25 +8682,6 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "votingType"
-          },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "VotingType"
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
             "value": "options"
           },
           "arguments": [
@@ -10294,14 +10275,6 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "proposal__votingType"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
             "value": "name"
           },
           "directives": []
@@ -11220,78 +11193,6 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "votingType"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "VotingType"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "votingType_not"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "VotingType"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "votingType_in"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NonNullType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "VotingType"
-                }
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "votingType_not_in"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NonNullType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "VotingType"
-                }
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
             "value": "options_"
           },
           "type": {
@@ -12052,14 +11953,6 @@ const schemaAST = {
           "name": {
             "kind": "Name",
             "value": "proposalState"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "votingType"
           },
           "directives": []
         },
@@ -20814,32 +20707,6 @@ const schemaAST = {
           "name": {
             "kind": "Name",
             "value": "votedFor"
-          },
-          "directives": []
-        }
-      ],
-      "directives": []
-    },
-    {
-      "kind": "EnumTypeDefinition",
-      "name": {
-        "kind": "Name",
-        "value": "VotingType"
-      },
-      "values": [
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "OneToOne"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "Quadratic"
           },
           "directives": []
         }

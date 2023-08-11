@@ -605,7 +605,6 @@ type Proposal {
   title: String!
   description: String!
   proposalState: ProposalState!
-  votingType: VotingType!
   options(skip: Int = 0, first: Int = 100, orderBy: ProposalOption_orderBy, orderDirection: OrderDirection, where: ProposalOption_filter): [ProposalOption!]!
   dao: DAO!
   proposer: Proposer!
@@ -710,7 +709,6 @@ enum ProposalOption_orderBy {
   proposal__title
   proposal__description
   proposal__proposalState
-  proposal__votingType
   name
   description
   voteCount
@@ -776,10 +774,6 @@ input Proposal_filter {
   proposalState_not: ProposalState
   proposalState_in: [ProposalState!]
   proposalState_not_in: [ProposalState!]
-  votingType: VotingType
-  votingType_not: VotingType
-  votingType_in: [VotingType!]
-  votingType_not_in: [VotingType!]
   options_: ProposalOption_filter
   dao: String
   dao_not: String
@@ -834,7 +828,6 @@ enum Proposal_orderBy {
   title
   description
   proposalState
-  votingType
   options
   dao
   dao__id
@@ -1701,11 +1694,6 @@ enum Voter_orderBy {
   election__candidatesCount
   election__votersCount
   votedFor
-}
-
-enum VotingType {
-  OneToOne
-  Quadratic
 }
 
 type _Block_ {

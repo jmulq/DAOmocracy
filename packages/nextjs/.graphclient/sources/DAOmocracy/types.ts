@@ -657,7 +657,6 @@ export type Proposal = {
   title: Scalars['String'];
   description: Scalars['String'];
   proposalState: ProposalState;
-  votingType: VotingType;
   options: Array<ProposalOption>;
   dao: DAO;
   proposer: Proposer;
@@ -771,7 +770,6 @@ export type ProposalOption_orderBy =
   | 'proposal__title'
   | 'proposal__description'
   | 'proposal__proposalState'
-  | 'proposal__votingType'
   | 'name'
   | 'description'
   | 'voteCount';
@@ -835,10 +833,6 @@ export type Proposal_filter = {
   proposalState_not?: InputMaybe<ProposalState>;
   proposalState_in?: InputMaybe<Array<ProposalState>>;
   proposalState_not_in?: InputMaybe<Array<ProposalState>>;
-  votingType?: InputMaybe<VotingType>;
-  votingType_not?: InputMaybe<VotingType>;
-  votingType_in?: InputMaybe<Array<VotingType>>;
-  votingType_not_in?: InputMaybe<Array<VotingType>>;
   options_?: InputMaybe<ProposalOption_filter>;
   dao?: InputMaybe<Scalars['String']>;
   dao_not?: InputMaybe<Scalars['String']>;
@@ -893,7 +887,6 @@ export type Proposal_orderBy =
   | 'title'
   | 'description'
   | 'proposalState'
-  | 'votingType'
   | 'options'
   | 'dao'
   | 'dao__id'
@@ -1629,10 +1622,6 @@ export type Voter_orderBy =
   | 'election__candidatesCount'
   | 'election__votersCount'
   | 'votedFor';
-
-export type VotingType =
-  | 'OneToOne'
-  | 'Quadratic';
 
 export type _Block_ = {
   /** The hash of the block */
