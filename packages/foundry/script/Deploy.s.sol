@@ -56,7 +56,7 @@ contract DeployRegAndFactory is Script {
     }
 }
 
-contract DeployDAOs is Script {
+contract DeployDAO is Script {
     function run(
         address factory,
         string memory name,
@@ -73,14 +73,16 @@ contract DeployDAOs is Script {
     }
 }
 
-contract AddMemberToDAO is Script {
-    function run(address dao, address member) external {
+contract AddMembersToDAO is Script {
+    function run(address dao) external {
         uint256 senderPrivateKey = vm.envUint("PRIVATE_KEY");
+        address[] memory daoMembers = vm.envAddress("DAO_MEMBERS", "|");
         vm.startBroadcast(senderPrivateKey);
 
         DAO daoContract = DAO(dao);
-        daoContract.addMember(member);
-
+        for (uint256 i = 0; i < daoMembers.length; i++) {
+            daoContract.addMember(daoMembers[i]);
+        }
         vm.stopBroadcast();
     }
 }
@@ -89,22 +91,29 @@ contract CreateDAOProposal is Script {
     function run(
         address daoAddress,
         string memory title,
-        string memory description,
-        Proposal.VotingType votingType,
-        string[] memory optionNames,
-        string[] memory optionDescriptions
+        string memory description // Proposal.VotingType votingType
     ) external {
         uint256 senderPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(senderPrivateKey);
 
+        string[] memory optionNamesString = vm.envString("OPTION_NAMES", "|");
+        string[] memory optionDescsString = vm.envString("OPTION_DESCS", "|");
+
+        console.logString(
+            string.concat("options length", vm.toString(optionNamesString.length))
+        );
+        console.logString(
+            string.concat("descs length", vm.toString(optionDescsString.length))
+        );
+
         DAO dao = DAO(daoAddress);
         dao.addProposer(vm.addr(senderPrivateKey));
+        dao.addProposer(address(dao));
         dao.createProposal(
             title,
             description,
-            votingType,
-            optionNames,
-            optionDescriptions
+            optionNamesString,
+            optionDescsString
         );
         vm.stopBroadcast();
     }

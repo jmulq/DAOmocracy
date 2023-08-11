@@ -82,7 +82,7 @@ type Proposal @entity {
   title: String!
   description: String!
   proposalState: ProposalState!
-  votingType: VotingType!
+  # votingType: VotingType!
   options: [ProposalOption!]! @derivedFrom(field: "proposal")
   dao: DAO!
   proposer: Proposer!
@@ -101,7 +101,7 @@ enum ProposalState {
   Closed
 }
 
-enum VotingType {
-  OneToOne
-  Quadratic
-}
+# enum VotingType {
+#   OneToOne
+#   Quadratic
+# }

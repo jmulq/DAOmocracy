@@ -29,9 +29,9 @@ dataSources:
     name: DAORegistry
     network: optimism-goerli
     source:
-      address: "0x116B6099945D6B662e7E7e5cef46f9b2FA5CcdA1"
+      address: "0x8cd01fd990C36CB34F99eA661b27b0a60f38f58f"
       abi: DAORegistry
-      startBlock: 13140287
+      startBlock: 13159918
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -51,9 +51,9 @@ dataSources:
     name: DAOFactory
     network: optimism-goerli
     source:
-      address: "0x41Cf70C72fcFFBD1938785A9C1774A3eA4359372"
+      address: "0xd30Df989D50bb89d3BF2f827E0B3880D623a2B6E"
       abi: DAOFactory
-      startBlock: 13140287
+      startBlock: 13159918
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
