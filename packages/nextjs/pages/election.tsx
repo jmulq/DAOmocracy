@@ -2,21 +2,69 @@
 import React, { useEffect, useState } from "react";
 import { ElectionQueryDocument, ElectionQueryQuery, execute } from "../.graphclient";
 import { NextPage } from "next";
-import { useAccount, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
+import { zeroAddress } from "viem";
+import { Chain, useAccount, useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import electionAbi from "~~/abis/election.abi";
+import sourceVoterAbi from "~~/abis/sourcevoter.abi";
 import CandidateCard from "~~/components/CandidateCard";
 
-export const candidateDescriptions = [
-  "Vote for Viktor Kaine, a master of strategy and innovation in the realm of data manipulation. With cyber-enhanced intelligence and keen foresight, he's primed to lead with calculated precision. Viktor's augmented neural interfaces underscore his capacity for insightful governance, while glitchy holographic projections mirror his knack for navigating complexity. Dressed in adaptive urban attire, Viktor Kaine exudes enigmatic strength, a candidate who embraces the shadows and artfully shapes a new trajectory for the city.",
-  "Elect Seraphina Reyes, a virtual reality trailblazer who wields data as a force for good. Her decisions are rooted in the intricate web of information, and holographic campaign rallies showcase her visionary leadership. Seraphina's VR headset-style eyewear demonstrates her grasp on the digital realm, while glowing data projections echo her mastery of data-driven decision-making. Through vibrant virtual environments, she immerses herself in the world she envisions, inviting voters to participate in the dawn of a new era of data-guided progress.",
-  "Cast your vote for Aurora Sterling, a beacon of innovation and a tech-savvy visionary. With a comic book infusion, she symbolizes a new era of politics, one defined by cybernetic policies and virtual governance. Aurora's augmented cyber-eyes exemplify her commitment to progress, while neon-lit enhancements reflect her dedication to lighting the path toward a brighter future. Dynamic poses capture her energy, and her futuristic attire, adorned with glowing accents, signifies her role as a pioneer in navigating a metropolis painted in the vibrant hues of innovation.",
-  "Binary Croak is a unique and unexpected candidate in the political arena. A digitally-augmented frog with a charismatic demeanor, Binary Croak advocates for the rights of augmented and non-human entities in the metropolis. Their platform revolves around equitable access to virtual spaces and bio-digital integration. With neon-lit skin and holographic projections, Binary Croak challenges the norms of the political landscape and represents a technologically diverse future.",
-];
+// TODO refactor
+// Choose base contract if on Optimism
+// Else, choose relevant CCIP source contract
+const getPrepareContractWriteOpts = (
+  chain: (Chain & { unsupported?: boolean | undefined }) | undefined,
+  address: string | undefined,
+  data: ElectionQueryQuery | undefined,
+  selectedCandidate: number,
+) => {
+  // Chain ID for CCIP config
+  const chainIdOptimismGoerli = BigInt("2664363617261496610");
+
+  if (!chain || !address) {
+    return {
+      address: zeroAddress,
+      abi: electionAbi,
+      functionName: "vote",
+      args: [address ?? "", BigInt(0)],
+    };
+  }
+  // OP Goerli
+  if (chain.id === 420) {
+    return {
+      address: data?.elections[0].id,
+      abi: electionAbi,
+      functionName: "vote",
+      args: [address ?? "", BigInt(selectedCandidate)],
+    };
+  } else if (chain.id === 80001) {
+    // Mumbai
+    return {
+      address: process.env.NEXT_PUBLIC_CCIP_SOURCE_MUBAI,
+      abi: sourceVoterAbi,
+      functionName: "vote",
+      args: [chainIdOptimismGoerli, process.env.NEXT_PUBLIC_CCIP_DESTINATION, 1, selectedCandidate],
+    };
+  } else {
+    console.log("return sep");
+    // Sepolia
+    return {
+      address: process.env.NEXT_PUBLIC_CCIP_SOURCE_SEPOLIA,
+      abi: sourceVoterAbi,
+      functionName: "vote",
+      args: [chainIdOptimismGoerli, process.env.NEXT_PUBLIC_CCIP_DESTINATION, 1, selectedCandidate],
+    };
+  }
+};
 
 const Election: NextPage = () => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
   const [data, setData] = useState<ElectionQueryQuery>();
   const [selectedCandidate, setSelectedCandidate] = useState<number>(0);
+
+  const hasUserVoted = data?.elections[0].voters
+    ? data.elections[0]?.voters.some(v => v.id.toLowerCase() === address?.toLowerCase())
+    : false;
 
   useEffect(() => {
     execute(ElectionQueryDocument, {}).then(result => {
@@ -24,13 +72,12 @@ const Election: NextPage = () => {
     });
   }, [setData]);
 
-  const { config } = usePrepareContractWrite({
-    address: data?.elections[0].id,
-    abi: electionAbi,
-    functionName: "vote",
-    args: [address ?? "", BigInt(selectedCandidate)],
-  });
+  const options = getPrepareContractWriteOpts(chain, address, data, selectedCandidate);
 
+  // @ts-ignore
+  const { config } = usePrepareContractWrite(options);
+
+  // @ts-ignore
   const { data: writeData, write } = useContractWrite(config);
 
   const { isLoading, isSuccess } = useWaitForTransaction({
@@ -53,7 +100,7 @@ const Election: NextPage = () => {
     buttonText = "Voting...";
   }
 
-  if (isSuccess) {
+  if (hasUserVoted || isSuccess) {
     buttonText = "Voted!";
   }
 
@@ -78,9 +125,9 @@ const Election: NextPage = () => {
         <div className="w-1/2 bg-gray-200 p-12 rounded-lg ml-4 text-left">
           <h2 className="text-lg font-semibold">{candidates[selectedCandidate].name}</h2>
           <p className="text-gray-600">{candidates[selectedCandidate].party}</p>
-          <p className="mt-2">{candidateDescriptions[selectedCandidate]}</p>
+          <p className="mt-2">{candidates[selectedCandidate].description}</p>
           <button
-            disabled={!address || isLoading || isSuccess}
+            disabled={!address || isLoading || isSuccess || hasUserVoted}
             className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2 disabled:bg-gray-400 mt-4"
             onClick={write}
           >
