@@ -33,7 +33,7 @@ contract Election is Ownable, WorldIDVerifier {
     }
 
     constructor(
-        IWorldID worldId,
+        address worldId,
         string memory appId,
         string memory actionId
     ) WorldIDVerifier(worldId, appId, actionId) Ownable() {}

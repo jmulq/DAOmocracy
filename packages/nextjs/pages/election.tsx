@@ -1,66 +1,25 @@
 // pages/dashboard.js
 import React, { useEffect, useState } from "react";
 import { ElectionQueryDocument, ElectionQueryQuery, execute } from "../.graphclient";
+import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { CredentialType, IDKitWidget, ISuccessResult } from "@worldcoin/idkit";
 import { NextPage } from "next";
-import { zeroAddress } from "viem";
-import { Chain, useAccount, useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
+import { decodeAbiParameters } from "viem";
+import { useAccount, useNetwork } from "wagmi";
 import electionAbi from "~~/abis/election.abi";
 import sourceVoterAbi from "~~/abis/sourcevoter.abi";
 import CandidateCard from "~~/components/CandidateCard";
 
-// TODO refactor
-// Choose base contract if on Optimism
-// Else, choose relevant CCIP source contract
-const getPrepareContractWriteOpts = (
-  chain: (Chain & { unsupported?: boolean | undefined }) | undefined,
-  address: string | undefined,
-  data: ElectionQueryQuery | undefined,
-  selectedCandidate: number,
-) => {
-  // Chain ID for CCIP config
-  const chainIdOptimismGoerli = BigInt("2664363617261496610");
-
-  if (!chain || !address) {
-    return {
-      address: zeroAddress,
-      abi: electionAbi,
-      functionName: "vote",
-      args: [address ?? "", BigInt(0)],
-    };
-  }
-  // OP Goerli
-  if (chain.id === 420) {
-    return {
-      address: data?.elections[0].id,
-      abi: electionAbi,
-      functionName: "vote",
-      args: [address ?? "", BigInt(selectedCandidate)],
-    };
-  } else if (chain.id === 80001) {
-    // Mumbai
-    return {
-      address: process.env.NEXT_PUBLIC_CCIP_SOURCE_MUBAI,
-      abi: sourceVoterAbi,
-      functionName: "vote",
-      args: [chainIdOptimismGoerli, process.env.NEXT_PUBLIC_CCIP_DESTINATION, 1, selectedCandidate],
-    };
-  } else {
-    console.log("return sep");
-    // Sepolia
-    return {
-      address: process.env.NEXT_PUBLIC_CCIP_SOURCE_SEPOLIA,
-      abi: sourceVoterAbi,
-      functionName: "vote",
-      args: [chainIdOptimismGoerli, process.env.NEXT_PUBLIC_CCIP_DESTINATION, 1, selectedCandidate],
-    };
-  }
-};
-
 const Election: NextPage = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const worldCoinAppId = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "";
   const [data, setData] = useState<ElectionQueryQuery>();
   const [selectedCandidate, setSelectedCandidate] = useState<number>(0);
+
+  const [hash, setHash] = useState<`0x${string}`>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const hasUserVoted = data?.elections[0].voters
     ? data.elections[0]?.voters.some(v => v.id.toLowerCase() === address?.toLowerCase())
@@ -72,17 +31,94 @@ const Election: NextPage = () => {
     });
   }, [setData]);
 
-  const options = getPrepareContractWriteOpts(chain, address, data, selectedCandidate);
+  useEffect(() => {
+    const waitForTx = async () => {
+      if (hash) {
+        try {
+          await waitForTransaction({
+            hash: "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060",
+          });
+          setIsLoading(false);
+          setIsSuccess(true);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+    waitForTx();
+  }, [hash]);
 
-  // @ts-ignore
-  const { config } = usePrepareContractWrite(options);
+  // TODO move into its own file
+  const decodeProof = (proof: string) => {
+    //@ts-ignore
+    return decodeAbiParameters([{ type: "uint256[8]" }], proof)[0];
+  };
 
-  // @ts-ignore
-  const { data: writeData, write } = useContractWrite(config);
-
-  const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: writeData?.hash,
-  });
+  const handleSuccess = async (result: ISuccessResult) => {
+    const chainIdOptimismGoerli = BigInt("2664363617261496610");
+    let options;
+    // if chain === op goerli
+    if (chain?.id === 420) {
+      options = {
+        address: data?.elections[0].id,
+        abi: electionAbi,
+        functionName: "vote",
+        args: [
+          address,
+          BigInt(selectedCandidate),
+          address,
+          result.merkle_root,
+          result.nullifier_hash,
+          decodeProof(result.proof),
+        ],
+      };
+      // TODO update source vote funcs
+    } else if (chain?.id === 80001) {
+      options = {
+        address: process.env.NEXT_PUBLIC_CCIP_SOURCE_MUBAI,
+        abi: sourceVoterAbi,
+        functionName: "vote",
+        args: [
+          chainIdOptimismGoerli,
+          process.env.NEXT_PUBLIC_CCIP_DESTINATION,
+          1,
+          address,
+          BigInt(selectedCandidate),
+          address,
+          result.merkle_root,
+          result.nullifier_hash,
+          decodeProof(result.proof),
+        ],
+      };
+    } else if (chain?.id === 11155111) {
+      options = {
+        address: process.env.NEXT_PUBLIC_CCIP_SOURCE_SEPOLIA,
+        abi: sourceVoterAbi,
+        functionName: "vote",
+        args: [
+          chainIdOptimismGoerli,
+          process.env.NEXT_PUBLIC_CCIP_DESTINATION,
+          1,
+          address,
+          BigInt(selectedCandidate),
+          address,
+          result.merkle_root,
+          result.nullifier_hash,
+          decodeProof(result.proof),
+        ],
+      };
+    }
+    if (!options) {
+      window.alert("Cannot prepare contract config. Please try again.");
+      return;
+    }
+    //@ts-ignore
+    const config = await prepareWriteContract(options);
+    //@ts-ignore
+    const { hash } = await writeContract(config);
+    setHash(hash);
+    setIsLoading(true);
+  };
 
   if (!data?.elections[0].candidates) {
     return <></>;
@@ -93,7 +129,7 @@ const Election: NextPage = () => {
   let buttonText = "Connect Wallet";
 
   if (address && !isLoading && !isSuccess) {
-    buttonText = "Vote";
+    buttonText = "Vote with World ID";
   }
 
   if (isLoading) {
@@ -126,13 +162,25 @@ const Election: NextPage = () => {
           <h2 className="text-lg font-semibold">{candidates[selectedCandidate].name}</h2>
           <p className="text-gray-600">{candidates[selectedCandidate].party}</p>
           <p className="mt-2">{candidates[selectedCandidate].description}</p>
-          <button
-            disabled={!address || isLoading || isSuccess || hasUserVoted}
-            className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2 disabled:bg-gray-400 mt-4"
-            onClick={write}
+
+          <IDKitWidget
+            app_id={worldCoinAppId}
+            action="election_vote"
+            signal={address}
+            onSuccess={handleSuccess}
+            credential_types={["orb"] as [CredentialType.Orb]}
+            enableTelemetry
           >
-            {buttonText}
-          </button>
+            {({ open }) => (
+              <button
+                disabled={!address || isLoading || isSuccess || hasUserVoted}
+                onClick={open}
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2 disabled:bg-gray-400 mt-4"
+              >
+                {buttonText}
+              </button>
+            )}
+          </IDKitWidget>
         </div>
       </div>
     </>

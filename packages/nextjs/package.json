@@ -20,6 +20,7 @@
     "@react-spring/web": "^9.7.3",
     "@uniswap/sdk-core": "~4.0.1",
     "@uniswap/v2-sdk": "~3.0.1",
+    "@worldcoin/idkit": "^0.5.1",
     "daisyui": "~2.31.0",
     "graphql": "^16.7.1",
     "next": "~13.1.6",

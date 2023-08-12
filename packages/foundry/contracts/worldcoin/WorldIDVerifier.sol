@@ -16,8 +16,8 @@ abstract contract WorldIDVerifier {
 
     mapping(uint256 => bool) internal _nullifierHashes;
 
-    constructor(IWorldID worldId, string memory appId, string memory actionId) {
-        _worldId = worldId;
+    constructor(address worldId, string memory appId, string memory actionId) {
+        _worldId = IWorldID(worldId);
         _appId = appId;
         _externalNullifier = abi
             .encodePacked(abi.encodePacked(appId).hashToField(), actionId)
