@@ -1,3 +1,35 @@
+## Core contract deployment
+
+1. DAORegistry + DAOFactory
+
+The registry should be deployed first, followed by the factory. Use the following script to achieve this:
+
+```shell
+forge script ./script/Deploy.s.sol:DeployRegAndFactory -vvv --broadcast --rpc-url optimismGoerli --sig "run()"
+```
+
+2. DAO deployment
+
+```shell
+forge script ./script/Deploy.s.sol:DeployDAO -vvv --broadcast --rpc-url optimismGoerli --sig "run(address,string,string)" -- <FACTORY_ADDRESS> <NAME> <DESCRIPTION>
+```
+
+3. AddMembersToDao
+
+Set env vars before running.
+
+```shell
+forge script ./script/Deploy.s.sol:AddMembersToDAO -vvv --broadcast --rpc-url optimismGoerli --sig "run(address)" -- <DAO>
+```
+
+4. CreateDAOProposal
+
+Set env vars before running.
+
+```shell
+forge script ./script/Deploy.s.sol:CreateDAOProposal -vvv --broadcast --rpc-url optimismGoerli --sig "run(address)" -- <DAO> <TITLE> <DESCRIPTION>
+```
+
 ## CCIP
 
 1. To deploy DestinationVoter, and Election with candidates added, run the following script (change network name following `SupportedNetworks` type in [`Helper.sol`](./script/ccip/Helper.sol)):
@@ -8,6 +40,7 @@ forge script ./script/ccip/CrossChainVote.s.sol:DeployDestination -vvv --broadca
 
 2. To deploy the [`SourceVoter.sol`](./contracts/ccip/SourceVoter.sol) smart contract on the **source blockchain**, run the following script:
 
+For the demo, this will likely need to be deployed on multiple chains. So run the command twice for each chain (eth sep = 0 / mumbai = 3)
 
 ```shell
 forge script ./script/ccip/CrossChainVote.s.sol:DeploySource -vvv --broadcast --rpc-url ethereumSepolia --sig "run(uint8)" -- 0

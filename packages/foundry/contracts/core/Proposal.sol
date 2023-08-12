@@ -10,16 +10,16 @@ contract Proposal is WorldIDVerifier {
         Closed
     }
     // TODO - Implement Quadratic Voting
-    enum VotingType {
-        OneToOne,
-        Quadratic
-    }
+    // enum VotingType {
+    //     OneToOne,
+    //     Quadratic
+    // }
 
     string public title;
     string public description;
     ProposalState public state;
 
-    VotingType public votingType;
+    // VotingType public votingType;
 
     struct Option {
         string name;
@@ -42,7 +42,7 @@ contract Proposal is WorldIDVerifier {
     constructor(
         string memory _title,
         string memory _description,
-        VotingType _votingType,
+        // VotingType _votingType,
         string[] memory _optionNames,
         string[] memory _optionDescriptions,
         IWorldID worldId,
@@ -55,7 +55,7 @@ contract Proposal is WorldIDVerifier {
         );
         title = _title;
         description = _description;
-        votingType = _votingType;
+        // votingType = _votingType;
         for (uint256 i = 0; i < _optionNames.length; i++) {
             options.push(Option(_optionNames[i], _optionDescriptions[i], 0));
         }

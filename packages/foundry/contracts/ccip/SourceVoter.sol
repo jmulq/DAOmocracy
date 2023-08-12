@@ -12,14 +12,14 @@ contract SourceVoter is Withdraw {
         LINK
     }
 
-    address immutable i_router;
-    address immutable i_link;
+    address immutable _router;
+    address immutable _link;
 
     event VoteSent(bytes32 messageId, address indexed voter, uint256 indexed candidateId);
 
     constructor(address router, address link) {
-        i_router = router;
-        i_link = link;
+        _router = router;
+        _link = link;
     }
 
     receive() external payable {}
@@ -35,10 +35,10 @@ contract SourceVoter is Withdraw {
             data: abi.encodeWithSignature("vote(address,uint256)", msg.sender, candidateId),
             tokenAmounts: new Client.EVMTokenAmount[](0),
             extraArgs: "",
-            feeToken: payFeesIn == PayFeesIn.LINK ? i_link : address(0)
+            feeToken: payFeesIn == PayFeesIn.LINK ? _link : address(0)
         });
 
-        uint256 fee = IRouterClient(i_router).getFee(
+        uint256 fee = IRouterClient(_router).getFee(
             destinationChainSelector,
             message
         );
@@ -46,13 +46,13 @@ contract SourceVoter is Withdraw {
         bytes32 messageId;
 
         if (payFeesIn == PayFeesIn.LINK) {
-            LinkTokenInterface(i_link).approve(i_router, fee);
-            messageId = IRouterClient(i_router).ccipSend(
+            LinkTokenInterface(_link).approve(_router, fee);
+            messageId = IRouterClient(_router).ccipSend(
                 destinationChainSelector,
                 message
             );
         } else {
-            messageId = IRouterClient(i_router).ccipSend{value: fee}(
+            messageId = IRouterClient(_router).ccipSend{value: fee}(
                 destinationChainSelector,
                 message
             );

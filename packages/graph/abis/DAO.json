@@ -251,11 +251,6 @@
         "type": "string"
       },
       {
-        "internalType": "enum Proposal.VotingType",
-        "name": "_votingType",
-        "type": "uint8"
-      },
-      {
         "internalType": "string[]",
         "name": "_optionNames",
         "type": "string[]"

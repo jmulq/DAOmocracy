@@ -1,0 +1,27 @@
+query ProposalQuery($proposalId: ID!) {
+  proposal(id: $proposalId) {
+    id
+    title
+    description
+    proposalState
+    options {
+      id
+      name
+      description
+      voteCount
+    }
+    dao {
+      id
+      name
+      description
+      members {
+        member {
+          id
+        }
+      }
+    }
+    proposer {
+      id
+    }
+  }
+}
