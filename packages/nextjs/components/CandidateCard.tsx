@@ -21,7 +21,7 @@ const CandidateCard = ({ candidate, imageSource, onClick }: CandidateCardProps) 
       />
       <h3 className="text-lg font-semibold">{candidate.name}</h3>
       <p className="text-gray-600 m-0.5">{candidate.party}</p>
-      <p className="text-gray-600 m-0.5">Votes: {candidate.votes}</p>
+      <p className="text-gray-600 m-0.5">Votes: {Number(BigInt(+candidate.votes))}</p>
     </div>
   );
 };

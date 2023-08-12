@@ -6,9 +6,9 @@ dataSources:
     name: Election
     network: optimism-goerli
     source:
-      address: "0x5b71Fc551a4c32E317350961FFb6C41769f09C03"
+      address: "0x982cba13bAc878580fd796d5Bd34A74A804849B5"
       abi: Election
-      startBlock: 13120325
+      startBlock: 13170405
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

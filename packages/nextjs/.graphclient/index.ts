@@ -57,6 +57,7 @@ export type Block_height = {
 export type Candidate = {
   id: Scalars['ID'];
   name: Scalars['String'];
+  description: Scalars['String'];
   party: Scalars['String'];
   votes: Scalars['BigInt'];
   election: Election;
@@ -91,6 +92,26 @@ export type Candidate_filter = {
   name_ends_with_nocase?: InputMaybe<Scalars['String']>;
   name_not_ends_with?: InputMaybe<Scalars['String']>;
   name_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  description_not?: InputMaybe<Scalars['String']>;
+  description_gt?: InputMaybe<Scalars['String']>;
+  description_lt?: InputMaybe<Scalars['String']>;
+  description_gte?: InputMaybe<Scalars['String']>;
+  description_lte?: InputMaybe<Scalars['String']>;
+  description_in?: InputMaybe<Array<Scalars['String']>>;
+  description_not_in?: InputMaybe<Array<Scalars['String']>>;
+  description_contains?: InputMaybe<Scalars['String']>;
+  description_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_not_contains?: InputMaybe<Scalars['String']>;
+  description_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_starts_with?: InputMaybe<Scalars['String']>;
+  description_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_starts_with?: InputMaybe<Scalars['String']>;
+  description_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_ends_with?: InputMaybe<Scalars['String']>;
+  description_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_ends_with?: InputMaybe<Scalars['String']>;
+  description_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   party?: InputMaybe<Scalars['String']>;
   party_not?: InputMaybe<Scalars['String']>;
   party_gt?: InputMaybe<Scalars['String']>;
@@ -149,6 +170,7 @@ export type Candidate_filter = {
 export type Candidate_orderBy =
   | 'id'
   | 'name'
+  | 'description'
   | 'party'
   | 'votes'
   | 'election'
@@ -1897,6 +1919,7 @@ export interface BytesScalarConfig extends GraphQLScalarTypeConfig<ResolversType
 export type CandidateResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Candidate'] = ResolversParentTypes['Candidate']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   party?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   votes?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   election?: Resolver<ResolversTypes['Election'], ParentType, ContextType>;
@@ -2158,7 +2181,7 @@ const daOmocracyTransforms = [];
 const additionalTypeDefs = [] as any[];
 const daOmocracyHandler = new GraphqlHandler({
               name: "DAOmocracy",
-              config: {"endpoint":"https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.30"},
+              config: {"endpoint":"https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.34"},
               baseDir,
               cache,
               pubsub,
@@ -2279,7 +2302,7 @@ export type ElectionQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ElectionQueryQuery = { elections: Array<(
     Pick<Election, 'id' | 'candidatesCount' | 'votersCount'>
-    & { candidates?: Maybe<Array<Pick<Candidate, 'id' | 'name' | 'party' | 'votes'>>>, voters?: Maybe<Array<Pick<Voter, 'id' | 'votedFor'>>> }
+    & { candidates?: Maybe<Array<Pick<Candidate, 'id' | 'name' | 'description' | 'party' | 'votes'>>>, voters?: Maybe<Array<Pick<Voter, 'id' | 'votedFor'>>> }
   )> };
 
 export type ProposalQueryQueryVariables = Exact<{
@@ -2358,6 +2381,7 @@ export const ElectionQueryDocument = gql`
     candidates {
       id
       name
+      description
       party
       votes
     }

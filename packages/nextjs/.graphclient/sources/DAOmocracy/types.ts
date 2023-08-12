@@ -35,6 +35,7 @@ export type Block_height = {
 export type Candidate = {
   id: Scalars['ID'];
   name: Scalars['String'];
+  description: Scalars['String'];
   party: Scalars['String'];
   votes: Scalars['BigInt'];
   election: Election;
@@ -69,6 +70,26 @@ export type Candidate_filter = {
   name_ends_with_nocase?: InputMaybe<Scalars['String']>;
   name_not_ends_with?: InputMaybe<Scalars['String']>;
   name_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  description_not?: InputMaybe<Scalars['String']>;
+  description_gt?: InputMaybe<Scalars['String']>;
+  description_lt?: InputMaybe<Scalars['String']>;
+  description_gte?: InputMaybe<Scalars['String']>;
+  description_lte?: InputMaybe<Scalars['String']>;
+  description_in?: InputMaybe<Array<Scalars['String']>>;
+  description_not_in?: InputMaybe<Array<Scalars['String']>>;
+  description_contains?: InputMaybe<Scalars['String']>;
+  description_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_not_contains?: InputMaybe<Scalars['String']>;
+  description_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_starts_with?: InputMaybe<Scalars['String']>;
+  description_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_starts_with?: InputMaybe<Scalars['String']>;
+  description_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_ends_with?: InputMaybe<Scalars['String']>;
+  description_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_ends_with?: InputMaybe<Scalars['String']>;
+  description_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   party?: InputMaybe<Scalars['String']>;
   party_not?: InputMaybe<Scalars['String']>;
   party_gt?: InputMaybe<Scalars['String']>;
@@ -127,6 +148,7 @@ export type Candidate_filter = {
 export type Candidate_orderBy =
   | 'id'
   | 'name'
+  | 'description'
   | 'party'
   | 'votes'
   | 'election'

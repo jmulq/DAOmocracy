@@ -40,6 +40,7 @@ forge script ./script/ccip/CrossChainVote.s.sol:DeployDestination -vvv --broadca
 
 2. To deploy the [`SourceVoter.sol`](./contracts/ccip/SourceVoter.sol) smart contract on the **source blockchain**, run the following script:
 
+For the demo, this will likely need to be deployed on multiple chains. So run the command twice for each chain (eth sep = 0 / mumbai = 3)
 
 ```shell
 forge script ./script/ccip/CrossChainVote.s.sol:DeploySource -vvv --broadcast --rpc-url ethereumSepolia --sig "run(uint8)" -- 0
