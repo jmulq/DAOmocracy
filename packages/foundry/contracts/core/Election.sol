@@ -12,6 +12,7 @@ contract Election is Ownable {
     struct Candidate {
         string name;
         string party;
+        string description;
         uint256 voteCount;
     }
 
@@ -43,9 +44,10 @@ contract Election is Ownable {
 
     function addCandidate(
         string memory _name,
-        string memory _party
+        string memory _party,
+        string memory _description
     ) public onlyOwner {
-        candidates[candidatesCount] = Candidate(_name, _party, 0);
+        candidates[candidatesCount] = Candidate(_name, _party, _description, 0);
         emit CandidateAdded(candidatesCount);
         candidatesCount++;
     }

@@ -4,6 +4,7 @@ query ElectionQuery {
     candidates {
       id
       name
+      description
       party
       votes
     }

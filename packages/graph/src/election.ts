@@ -28,7 +28,8 @@ export function handleCandidateAdded(event: CandidateAddedEvent): void {
   let candidateData = contract.candidates(event.params.candidateId);
   candidate.name = candidateData.getName();
   candidate.party = candidateData.getParty();
-  candidate.votes = candidateData.getVoteCount();
+  candidate.description = candidateData.getDescription();
+  candidate.votes = BigInt.fromI32(0);
   candidate.election = election.id;
   candidate.save();
 }

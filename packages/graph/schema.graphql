@@ -30,6 +30,7 @@ type Election @entity {
 type Candidate @entity {
   id: ID! # election address + candidate ID
   name: String!
+  description: String!
   party: String!
   votes: BigInt!
   election: Election!

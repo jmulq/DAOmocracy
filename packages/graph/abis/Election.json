@@ -85,6 +85,11 @@
                 "internalType": "string",
                 "name": "_party",
                 "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_description",
+                "type": "string"
             }
         ],
         "name": "addCandidate",
@@ -110,6 +115,11 @@
             {
                 "internalType": "string",
                 "name": "party",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
                 "type": "string"
             },
             {
@@ -196,6 +206,11 @@
     },
     {
         "inputs": [
+            {
+                "internalType": "address",
+                "name": "_voter",
+                "type": "address"
+            },
             {
                 "internalType": "uint256",
                 "name": "_candidateId",
