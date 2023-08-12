@@ -22,9 +22,6 @@ contract DeployElection is Script {
         );
 
         election.openVoting();
-        election.addCandidate("James", "JAM");
-        election.addCandidate("David", "DAV");
-        election.addCandidate("Vanessa", "VAN");
 
         console.log("Voting open and candidates added");
 
