@@ -20,7 +20,7 @@ We should dare to reimagine the imperfect systems we inherit, envisioning a futu
 
   - [Optimism](#optimism)
   - [Worldcoin](#worldcoin)
-  - [Chainlink](#hainlink)
+  - [Chainlink](#chainlink)
   - [The Graph](#the-graph)
 
   ## Motive
@@ -64,7 +64,7 @@ In this vision, membership in specialised DAOs is not limited to a select few bu
 
 ## System design
 
-
+![daomocracy_diagram](https://github.com/jmulq/DAOmocracy/assets/38944661/37b1d9a8-a18b-4787-b8a0-1e6ae0484083)
 
 ## Hackathon Judges
 
