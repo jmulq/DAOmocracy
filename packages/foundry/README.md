@@ -27,7 +27,7 @@ forge script ./script/Deploy.s.sol:AddMembersToDAO -vvv --broadcast --rpc-url op
 Set env vars before running.
 
 ```shell
-forge script ./script/Deploy.s.sol:CreateDAOProposal -vvv --broadcast --rpc-url optimismGoerli --sig "run(address)" -- <DAO> <TITLE> <DESCRIPTION>
+forge script ./script/Deploy.s.sol:CreateDAOProposal -vvv --broadcast --rpc-url optimismGoerli --sig "run(address,string,string)" -- <DAO> <TITLE> <DESCRIPTION>
 ```
 
 ## CCIP

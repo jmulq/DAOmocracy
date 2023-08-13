@@ -2,7 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Proposal.sol";
+import "../worldcoin/WorldIDVerifier.sol";
 
 contract DAO is AccessControl {
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
@@ -33,6 +35,7 @@ contract DAO is AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         name = _name;
         description = _description;
+        proposalsCount = 0;
     }
 
     function isMember(address _member) public view returns (bool) {
@@ -77,14 +80,23 @@ contract DAO is AccessControl {
         string memory _description,
         // Proposal.VotingType _votingType,
         string[] memory _optionNames,
-        string[] memory _optionDescriptions
+        string[] memory _optionDescriptions,
+        address worldIdRouter,
+        string memory worldAppId
     ) public onlyRole(PROPOSER_ROLE) {
+        string memory proposalId = string.concat(
+            Strings.toHexString(uint256(uint160(address(this))), 20),
+            "_proposal_",
+            Strings.toString(proposalsCount)
+        );
         Proposal proposal = new Proposal(
             _title,
             _description,
-            // _votingType,
             _optionNames,
-            _optionDescriptions
+            _optionDescriptions,
+            proposalId,
+            worldIdRouter,
+            worldAppId
         );
         proposals[proposalsCount] = proposal;
         proposalsCount++;
@@ -93,10 +105,14 @@ contract DAO is AccessControl {
 
     function voteOnProposal(
         uint256 _proposalId,
-        uint256 _optionId
+        uint256 _optionId,
+        address signal,
+        uint256 root,
+        uint256 nullifierHash,
+        uint256[8] calldata proof
     ) public onlyRole(MEMBER_ROLE) {
         Proposal proposal = proposals[_proposalId];
-        proposal.vote(_optionId);
+        proposal.vote(_optionId, signal, root, nullifierHash, proof);
     }
 
     function closeProposal(

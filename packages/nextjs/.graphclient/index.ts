@@ -2181,7 +2181,7 @@ const daOmocracyTransforms = [];
 const additionalTypeDefs = [] as any[];
 const daOmocracyHandler = new GraphqlHandler({
               name: "DAOmocracy",
-              config: {"endpoint":"https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.34"},
+              config: {"endpoint":"https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.38"},
               baseDir,
               cache,
               pubsub,

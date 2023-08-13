@@ -150,9 +150,34 @@ export default [
         type: "uint8",
       },
       {
+        internalType: "address",
+        name: "voter",
+        type: "address",
+      },
+      {
         internalType: "uint256",
         name: "candidateId",
         type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "signal",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "root",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "nullifierHash",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256[8]",
+        name: "proof",
+        type: "uint256[8]",
       },
     ],
     name: "vote",

@@ -1,12 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// Useful for debugging. Remove when deploying to a live network.
 import "forge-std/console.sol";
-
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../worldcoin/WorldIDVerifier.sol";
+import {IWorldID} from "../worldcoin/interfaces/IWorldID.sol";
 
-contract Election is Ownable {
+contract Election is Ownable, WorldIDVerifier {
     bool public isVotingOpen = false;
 
     struct Candidate {
@@ -32,7 +32,11 @@ contract Election is Ownable {
         _;
     }
 
-    constructor() Ownable() {}
+    constructor(
+        address worldId,
+        string memory appId,
+        string memory actionId
+    ) WorldIDVerifier(worldId, appId, actionId) Ownable() {}
 
     function openVoting() public onlyOwner {
         isVotingOpen = true;
@@ -52,11 +56,21 @@ contract Election is Ownable {
         candidatesCount++;
     }
 
-    function vote(address _voter, uint256 _candidateId) public isElectionActive {
-        require(!voters[_voter], "You have already voted");
-        require(_candidateId <= candidatesCount, "Invalid candidate");
-        voters[_voter] = true;
-        candidates[_candidateId].voteCount++;
-        emit VoteCast(_voter, _candidateId);
+    function vote(
+        address voter,
+        uint256 candidateId,
+        address signal,
+        uint256 root,
+        uint256 nullifierHash,
+        uint256[8] calldata proof
+    ) public isElectionActive {
+        _verifyWorldId(signal, root, nullifierHash, proof);
+        require(!voters[voter], "You have already voted");
+        require(candidateId <= candidatesCount, "Invalid candidate");
+
+        voters[voter] = true;
+        candidates[candidateId].voteCount++;
+
+        emit VoteCast(voter, candidateId);
     }
 }

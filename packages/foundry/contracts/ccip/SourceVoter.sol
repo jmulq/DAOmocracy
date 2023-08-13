@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import { LinkTokenInterface } from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
-import { IRouterClient } from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
-import { Client } from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
-import { Withdraw } from "./utils/Withdraw.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
+import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
+import {Withdraw} from "./utils/Withdraw.sol";
 
 contract SourceVoter is Withdraw {
     enum PayFeesIn {
@@ -15,7 +15,11 @@ contract SourceVoter is Withdraw {
     address immutable _router;
     address immutable _link;
 
-    event VoteSent(bytes32 messageId, address indexed voter, uint256 indexed candidateId);
+    event VoteSent(
+        bytes32 messageId,
+        address indexed voter,
+        uint256 indexed candidateId
+    );
 
     constructor(address router, address link) {
         _router = router;
@@ -28,11 +32,24 @@ contract SourceVoter is Withdraw {
         uint64 destinationChainSelector,
         address receiver,
         PayFeesIn payFeesIn,
-        uint256 candidateId
+        address voter,
+        uint256 candidateId,
+        address signal,
+        uint256 root,
+        uint256 nullifierHash,
+        uint256[8] calldata proof
     ) external {
         Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver),
-            data: abi.encodeWithSignature("vote(address,uint256)", msg.sender, candidateId),
+            data: abi.encodeWithSignature(
+                "vote(address,uint256,address,uint256,uint256,uint256[8])",
+                voter,
+                candidateId,
+                signal,
+                root,
+                nullifierHash,
+                proof
+            ),
             tokenAmounts: new Client.EVMTokenAmount[](0),
             extraArgs: "",
             feeToken: payFeesIn == PayFeesIn.LINK ? _link : address(0)

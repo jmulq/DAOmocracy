@@ -2,18 +2,38 @@ export default [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "worldId",
-        type: "address",
-      },
-      {
         internalType: "string",
-        name: "appId",
+        name: "_title",
         type: "string",
       },
       {
         internalType: "string",
-        name: "actionId",
+        name: "_description",
+        type: "string",
+      },
+      {
+        internalType: "string[]",
+        name: "_optionNames",
+        type: "string[]",
+      },
+      {
+        internalType: "string[]",
+        name: "_optionDescriptions",
+        type: "string[]",
+      },
+      {
+        internalType: "string",
+        name: "_proposalId",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "worldIdRouter",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "worldAppId",
         type: "string",
       },
     ],
@@ -27,53 +47,8 @@ export default [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "candidateId",
-        type: "uint256",
-      },
-    ],
-    name: "CandidateAdded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "candidateId",
-        type: "uint256",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "voteCount",
-        type: "uint256",
-      },
-    ],
-    name: "ElectionResult",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferred",
+    inputs: [],
+    name: "ProposalClosed",
     type: "event",
   },
   {
@@ -88,34 +63,85 @@ export default [
       {
         indexed: true,
         internalType: "uint256",
-        name: "candidateId",
+        name: "optionId",
         type: "uint256",
       },
     ],
-    name: "VoteCast",
+    name: "ProposalVoteCast",
     type: "event",
+  },
+  {
+    inputs: [],
+    name: "closeProposal",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "description",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: "string",
-        name: "_name",
-        type: "string",
+        internalType: "uint256",
+        name: "_start",
+        type: "uint256",
       },
       {
-        internalType: "string",
-        name: "_party",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_description",
-        type: "string",
+        internalType: "uint256",
+        name: "_count",
+        type: "uint256",
       },
     ],
-    name: "addCandidate",
-    outputs: [],
-    stateMutability: "nonpayable",
+    name: "getOptionsBatch",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "description",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "voteCount",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Proposal.Option[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getOptionsLength",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -126,16 +152,11 @@ export default [
         type: "uint256",
       },
     ],
-    name: "candidates",
+    name: "options",
     outputs: [
       {
         internalType: "string",
         name: "name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "party",
         type: "string",
       },
       {
@@ -154,12 +175,12 @@ export default [
   },
   {
     inputs: [],
-    name: "candidatesCount",
+    name: "proposalId",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "string",
         name: "",
-        type: "uint256",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -167,19 +188,12 @@ export default [
   },
   {
     inputs: [],
-    name: "endVoting",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "isVotingOpen",
+    name: "state",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "enum Proposal.ProposalState",
         name: "",
-        type: "bool",
+        type: "uint8",
       },
     ],
     stateMutability: "view",
@@ -187,54 +201,22 @@ export default [
   },
   {
     inputs: [],
-    name: "openVoting",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
+    name: "title",
     outputs: [
       {
-        internalType: "address",
+        internalType: "string",
         name: "",
-        type: "address",
+        type: "string",
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
       {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "voter",
-        type: "address",
-      },
-      {
         internalType: "uint256",
-        name: "candidateId",
+        name: "_optionId",
         type: "uint256",
       },
       {
