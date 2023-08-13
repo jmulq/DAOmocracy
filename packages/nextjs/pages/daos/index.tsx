@@ -23,7 +23,7 @@ const DAOS: NextPage = () => {
 
   return (
     <>
-      <h2 className="text-2xl font-bold text-left mb-2">DAOs</h2>
+      <h2 className="text-2xl font-bold text-left pl-5 mb-8">DAO Hub</h2>
 
       <div className="flex">
         <div className="w-2/5 grid grid-cols-2 gap-4">
@@ -35,14 +35,16 @@ const DAOS: NextPage = () => {
         </div>
 
         <div className="w-1/2 bg-gray-200 p-12 rounded-lg ml-4 text-left">
-          <h2 className="text-lg font-semibold">{daos[selectedDAO].name}</h2>
-          <p className="text-gray-600">{daos[selectedDAO].description}</p>
-          <Link
-            className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2"
-            href={`/daos/${daos[selectedDAO].id}`}
-          >
-            Enter
-          </Link>
+          <h2 className="text-xl text-center   font-semibold mb-12">{daos[selectedDAO].name}</h2>
+          <p className="text-gray-600 mb-12">{daos[selectedDAO].description}</p>
+          <div className="flex justify-center">
+            <Link
+              className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2"
+              href={`/daos/${daos[selectedDAO].id}`}
+            >
+              Enter
+            </Link>
+          </div>
         </div>
       </div>
     </>

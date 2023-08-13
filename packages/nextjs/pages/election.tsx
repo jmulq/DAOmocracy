@@ -4,11 +4,11 @@ import { ElectionQueryDocument, ElectionQueryQuery, execute } from "../.graphcli
 import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { CredentialType, IDKitWidget, ISuccessResult } from "@worldcoin/idkit";
 import { NextPage } from "next";
-import { decodeAbiParameters } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import electionAbi from "~~/abis/election.abi";
 import sourceVoterAbi from "~~/abis/sourcevoter.abi";
 import CandidateCard from "~~/components/CandidateCard";
+import { decode } from "~~/utils/decode";
 
 const Election: NextPage = () => {
   const { address } = useAccount();
@@ -36,7 +36,7 @@ const Election: NextPage = () => {
       if (hash) {
         try {
           await waitForTransaction({
-            hash: "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060",
+            hash,
           });
           setIsLoading(false);
           setIsSuccess(true);
@@ -47,12 +47,6 @@ const Election: NextPage = () => {
     };
     waitForTx();
   }, [hash]);
-
-  // TODO move into its own file
-  const decodeProof = (proof: string) => {
-    //@ts-ignore
-    return decodeAbiParameters([{ type: "uint256[8]" }], proof)[0];
-  };
 
   const handleSuccess = async (result: ISuccessResult) => {
     const chainIdOptimismGoerli = BigInt("2664363617261496610");
@@ -67,9 +61,9 @@ const Election: NextPage = () => {
           address,
           BigInt(selectedCandidate),
           address,
-          result.merkle_root,
-          result.nullifier_hash,
-          decodeProof(result.proof),
+          decode("uint256", result.merkle_root),
+          decode("uint256", result.nullifier_hash),
+          decode("uint256[8]", result.proof),
         ],
       };
       // TODO update source vote funcs
@@ -85,9 +79,9 @@ const Election: NextPage = () => {
           address,
           BigInt(selectedCandidate),
           address,
-          result.merkle_root,
-          result.nullifier_hash,
-          decodeProof(result.proof),
+          decode("uint256", result.merkle_root),
+          decode("uint256", result.nullifier_hash),
+          decode("uint256[8]", result.proof),
         ],
       };
     } else if (chain?.id === 11155111) {
@@ -104,7 +98,9 @@ const Election: NextPage = () => {
           address,
           result.merkle_root,
           result.nullifier_hash,
-          decodeProof(result.proof),
+          decode("uint256", result.merkle_root),
+          decode("uint256", result.nullifier_hash),
+          decode("uint256[8]", result.proof),
         ],
       };
     }

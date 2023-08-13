@@ -2,7 +2,7 @@ sources:
   - name: DAOmocracy
     handler:
       graphql:
-        endpoint: https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.35
+        endpoint: https://api.studio.thegraph.com/query/50862/daomocracy/v0.0.37
 
 documents:
   - ./queries/election-query.graphql
