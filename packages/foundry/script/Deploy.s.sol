@@ -31,7 +31,6 @@ contract DeployElection is Script {
 
 contract DeployRegAndFactory is Script {
     function run() external {
-        console.logString("hello");
         uint256 senderPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(senderPrivateKey);
 
@@ -95,22 +94,20 @@ contract CreateDAOProposal is Script {
 
         string[] memory optionNamesString = vm.envString("OPTION_NAMES", "|");
         string[] memory optionDescsString = vm.envString("OPTION_DESCS", "|");
-
-        console.logString(
-            string.concat("options length", vm.toString(optionNamesString.length))
-        );
-        console.logString(
-            string.concat("descs length", vm.toString(optionDescsString.length))
-        );
+        address worldIdRouter = vm.envAddress("WORLD_ADDRESS");
+        string memory worldAppId = vm.envString("WORLD_APP_ID");
 
         DAO dao = DAO(daoAddress);
         dao.addProposer(vm.addr(senderPrivateKey));
+        dao.addMember(address(dao));
         dao.addProposer(address(dao));
         dao.createProposal(
             title,
             description,
             optionNamesString,
-            optionDescsString
+            optionDescsString,
+            worldIdRouter,
+            worldAppId
         );
         vm.stopBroadcast();
     }

@@ -17,6 +17,7 @@ contract Proposal is WorldIDVerifier {
 
     string public title;
     string public description;
+    string public proposalId;
     ProposalState public state;
 
     // VotingType public votingType;
@@ -45,14 +46,21 @@ contract Proposal is WorldIDVerifier {
         // VotingType _votingType,
         string[] memory _optionNames,
         string[] memory _optionDescriptions,
-        IWorldID worldId,
-        string memory appId,
-        string memory actionId
-    ) WorldIDVerifier(worldId, appId, actionId) {
+        string memory _proposalId,
+        address worldIdRouter,
+        string memory worldAppId
+    )
+        WorldIDVerifier(
+            worldIdRouter,
+            worldAppId,
+            _proposalId
+        )
+    {
         require(
             _optionNames.length == _optionDescriptions.length,
             "Option names and descriptions must be the same length"
         );
+        proposalId = _proposalId;
         title = _title;
         description = _description;
         // votingType = _votingType;
@@ -70,7 +78,6 @@ contract Proposal is WorldIDVerifier {
         uint256[8] calldata proof
     ) public isProposalActive {
         _verifyWorldId(signal, root, nullifierHash, proof);
-
         require(!voters[msg.sender], "You have already voted");
         require(_optionId < options.length, "Invalid option");
         voters[msg.sender] = true;

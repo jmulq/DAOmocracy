@@ -5,9 +5,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Proposal.sol";
 import "../worldcoin/WorldIDVerifier.sol";
-import {IWorldID} from "../worldcoin/interfaces/IWorldID.sol";
 
-contract DAO is AccessControl, WorldIDVerifier {
+contract DAO is AccessControl {
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
     bytes32 public constant MEMBER_ROLE = keccak256("MEMBER_ROLE");
 
@@ -30,15 +29,13 @@ contract DAO is AccessControl, WorldIDVerifier {
     constructor(
         address _admin,
         string memory _name,
-        string memory _description,
-        IWorldID worldId,
-        string memory appId,
-        string memory actionId
-    ) WorldIDVerifier(worldId, appId, actionId) {
+        string memory _description
+    ) {
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         name = _name;
         description = _description;
+        proposalsCount = 0;
     }
 
     function isMember(address _member) public view returns (bool) {
@@ -78,39 +75,28 @@ contract DAO is AccessControl, WorldIDVerifier {
         emit ProposerRemoved(_proposer);
     }
 
-    // TODO - Implement and test WorldIDVerification
     function createProposal(
         string memory _title,
         string memory _description,
         // Proposal.VotingType _votingType,
         string[] memory _optionNames,
-        string[] memory _optionDescriptions
-    )
-        public
-        // address signal,
-        // uint256 root,
-        // uint256 nullifierHash,
-        // uint256[8] calldata proof
-        onlyRole(PROPOSER_ROLE)
-    {
-        // _verifyWorldId(signal, root, nullifierHash, proof);
-
-        string memory actionId = string.concat(
-            Strings.toHexString(address(this)),
-            "_",
-            "proposal",
+        string[] memory _optionDescriptions,
+        address worldIdRouter,
+        string memory worldAppId
+    ) public onlyRole(PROPOSER_ROLE) {
+        string memory proposalId = string.concat(
+            Strings.toHexString(uint256(uint160(address(this))), 20),
+            "_proposal_",
             Strings.toString(proposalsCount)
         );
-
         Proposal proposal = new Proposal(
             _title,
             _description,
-            // _votingType,
             _optionNames,
             _optionDescriptions,
-            _worldId,
-            _appId,
-            actionId
+            proposalId,
+            worldIdRouter,
+            worldAppId
         );
         proposals[proposalsCount] = proposal;
         proposalsCount++;
@@ -119,10 +105,14 @@ contract DAO is AccessControl, WorldIDVerifier {
 
     function voteOnProposal(
         uint256 _proposalId,
-        uint256 _optionId
+        uint256 _optionId,
+        address signal,
+        uint256 root,
+        uint256 nullifierHash,
+        uint256[8] calldata proof
     ) public onlyRole(MEMBER_ROLE) {
         Proposal proposal = proposals[_proposalId];
-        proposal.vote(_optionId);
+        proposal.vote(_optionId, signal, root, nullifierHash, proof);
     }
 
     function closeProposal(
