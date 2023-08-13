@@ -11,6 +11,7 @@ import { useAccount, useContractRead } from "wagmi";
 import daoAbi from "~~/abis/dao.abi";
 import proposalAbi from "~~/abis/proposal.abi";
 import { decode } from "~~/utils/decode";
+import { getDaoImage } from "~~/utils/getDaoImage";
 
 const Proposal: NextPage = () => {
   const { address } = useAccount();
@@ -124,9 +125,15 @@ const Proposal: NextPage = () => {
 
       <div className="flex">
         <div className="w-4/5 flex flex-col justify-center">
-          <Image src="/assets/dao1.png" alt="dao-image" width={500} height={500} />
+          <Image
+            className="rounded-3xl"
+            src={getDaoImage(proposal.dao.name)}
+            alt="dao-image"
+            width={500}
+            height={500}
+          />
         </div>
-        <div className="flex flex-col text-left ml-8 p-10 bg-gray-50">
+        <div className="flex flex-col text-left ml-8 p-10 bg-white rounded-3xl">
           <p className="mb-1 text-gray-600">Proposed by: {proposal.proposer.id}</p>
           <span>
             <p className="mb-4 text-gray-600">Current approvals: {proposal.options[0].voteCount}</p>

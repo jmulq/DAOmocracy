@@ -10,9 +10,9 @@ type CandidateCardProps = {
 
 const CandidateCard = ({ candidate, imageSource, onClick }: CandidateCardProps) => {
   return (
-    <div className="bg-white shadow rounded-lg flex flex-col h-fit cursor-pointer" onClick={onClick}>
+    <div className="bg-white shadow rounded-3xl flex flex-col h-fit cursor-pointer" onClick={onClick}>
       <Image
-        className="rounded-t-lg"
+        className="rounded-t-3xl"
         about="candidate image"
         alt={`Candidate_${candidate.id}`}
         src={imageSource}

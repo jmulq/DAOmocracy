@@ -34,12 +34,12 @@ const DAOS: NextPage = () => {
           })}
         </div>
 
-        <div className="w-1/2 bg-gray-200 p-12 rounded-lg ml-4 text-left">
+        <div className="w-1/2 bg-white p-12 rounded-3xl ml-4 text-left">
           <h2 className="text-xl text-center   font-semibold mb-12">{daos[selectedDAO].name}</h2>
           <p className="text-gray-600 mb-12">{daos[selectedDAO].description}</p>
           <div className="flex justify-center">
             <Link
-              className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2"
+              className="bg-blue-500 hover:bg-blue-600 text-white rounded-xl px-4 py-2"
               href={`/daos/${daos[selectedDAO].id}`}
             >
               Enter

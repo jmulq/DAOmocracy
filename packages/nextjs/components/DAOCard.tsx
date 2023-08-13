@@ -10,9 +10,9 @@ type DAOCardProps = {
 
 const DAOCard = ({ dao, imageSource, onClick }: DAOCardProps) => {
   return (
-    <div className="bg-white shadow rounded-lg flex flex-col h-fit cursor-pointer" onClick={onClick}>
+    <div className="bg-white shadow rounded-3xl flex flex-col h-fit cursor-pointer" onClick={onClick}>
       <Image
-        className="rounded-t-lg"
+        className="rounded-t-3xl"
         about="dao image"
         alt={`DAO${dao.id}`}
         src={imageSource}

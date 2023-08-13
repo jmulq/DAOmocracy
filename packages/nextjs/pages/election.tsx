@@ -4,6 +4,7 @@ import { ElectionQueryDocument, ElectionQueryQuery, execute } from "../.graphcli
 import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { CredentialType, IDKitWidget, ISuccessResult } from "@worldcoin/idkit";
 import { NextPage } from "next";
+import { BaseError, ContractFunctionRevertedError } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import electionAbi from "~~/abis/election.abi";
 import sourceVoterAbi from "~~/abis/sourcevoter.abi";
@@ -49,71 +50,83 @@ const Election: NextPage = () => {
   }, [hash]);
 
   const handleSuccess = async (result: ISuccessResult) => {
-    const chainIdOptimismGoerli = BigInt("2664363617261496610");
-    let options;
-    // if chain === op goerli
-    if (chain?.id === 420) {
-      options = {
-        address: data?.elections[0].id,
-        abi: electionAbi,
-        functionName: "vote",
-        args: [
-          address,
-          BigInt(selectedCandidate),
-          address,
-          decode("uint256", result.merkle_root),
-          decode("uint256", result.nullifier_hash),
-          decode("uint256[8]", result.proof),
-        ],
-      };
-      // TODO update source vote funcs
-    } else if (chain?.id === 80001) {
-      options = {
-        address: process.env.NEXT_PUBLIC_CCIP_SOURCE_MUBAI,
-        abi: sourceVoterAbi,
-        functionName: "vote",
-        args: [
-          chainIdOptimismGoerli,
-          process.env.NEXT_PUBLIC_CCIP_DESTINATION,
-          1,
-          address,
-          BigInt(selectedCandidate),
-          address,
-          decode("uint256", result.merkle_root),
-          decode("uint256", result.nullifier_hash),
-          decode("uint256[8]", result.proof),
-        ],
-      };
-    } else if (chain?.id === 11155111) {
-      options = {
-        address: process.env.NEXT_PUBLIC_CCIP_SOURCE_SEPOLIA,
-        abi: sourceVoterAbi,
-        functionName: "vote",
-        args: [
-          chainIdOptimismGoerli,
-          process.env.NEXT_PUBLIC_CCIP_DESTINATION,
-          1,
-          address,
-          BigInt(selectedCandidate),
-          address,
-          result.merkle_root,
-          result.nullifier_hash,
-          decode("uint256", result.merkle_root),
-          decode("uint256", result.nullifier_hash),
-          decode("uint256[8]", result.proof),
-        ],
-      };
+    try {
+      const chainIdOptimismGoerli = BigInt("2664363617261496610");
+      let options;
+      // if chain === op goerli
+      if (chain?.id === 420) {
+        options = {
+          address: data?.elections[0].id,
+          abi: electionAbi,
+          functionName: "vote",
+          args: [
+            address,
+            BigInt(selectedCandidate),
+            address,
+            decode("uint256", result.merkle_root),
+            decode("uint256", result.nullifier_hash),
+            decode("uint256[8]", result.proof),
+          ],
+        };
+        // TODO update source vote funcs
+      } else if (chain?.id === 80001) {
+        options = {
+          address: process.env.NEXT_PUBLIC_CCIP_SOURCE_MUBAI,
+          abi: sourceVoterAbi,
+          functionName: "vote",
+          args: [
+            chainIdOptimismGoerli,
+            process.env.NEXT_PUBLIC_CCIP_DESTINATION,
+            1,
+            address,
+            BigInt(selectedCandidate),
+            address,
+            decode("uint256", result.merkle_root),
+            decode("uint256", result.nullifier_hash),
+            decode("uint256[8]", result.proof),
+          ],
+        };
+      } else if (chain?.id === 11155111) {
+        options = {
+          address: process.env.NEXT_PUBLIC_CCIP_SOURCE_SEPOLIA,
+          abi: sourceVoterAbi,
+          functionName: "vote",
+          args: [
+            chainIdOptimismGoerli,
+            process.env.NEXT_PUBLIC_CCIP_DESTINATION,
+            1,
+            address,
+            BigInt(selectedCandidate),
+            address,
+            result.merkle_root,
+            result.nullifier_hash,
+            decode("uint256", result.merkle_root),
+            decode("uint256", result.nullifier_hash),
+            decode("uint256[8]", result.proof),
+          ],
+        };
+      }
+      if (!options) {
+        window.alert("Cannot prepare contract config. Please try again.");
+        return;
+      }
+      //@ts-ignore
+      const config = await prepareWriteContract(options);
+      //@ts-ignore
+      const { hash } = await writeContract(config);
+      setHash(hash);
+      setIsLoading(true);
+    } catch (err: any) {
+      if (err instanceof BaseError) {
+        const revertError = err.walk(err => err instanceof ContractFunctionRevertedError);
+        if (revertError instanceof ContractFunctionRevertedError) {
+          const errorName = revertError.data?.errorName ?? "";
+          if (errorName === "InvalidNullifier") {
+            window.alert("You have already voted in this election using your World ID!");
+          }
+        }
+      }
     }
-    if (!options) {
-      window.alert("Cannot prepare contract config. Please try again.");
-      return;
-    }
-    //@ts-ignore
-    const config = await prepareWriteContract(options);
-    //@ts-ignore
-    const { hash } = await writeContract(config);
-    setHash(hash);
-    setIsLoading(true);
   };
 
   if (!data?.elections[0].candidates) {
@@ -154,29 +167,31 @@ const Election: NextPage = () => {
           })}
         </div>
 
-        <div className="w-1/2 bg-gray-200 p-12 rounded-lg ml-4 text-left">
+        <div className="w-1/2 bg-white p-12 rounded-3xl ml-4 text-left">
           <h2 className="text-lg font-semibold">{candidates[selectedCandidate].name}</h2>
           <p className="text-gray-600">{candidates[selectedCandidate].party}</p>
           <p className="mt-2">{candidates[selectedCandidate].description}</p>
 
-          <IDKitWidget
-            app_id={worldCoinAppId}
-            action="election_vote"
-            signal={address}
-            onSuccess={handleSuccess}
-            credential_types={["orb"] as [CredentialType.Orb]}
-            enableTelemetry
-          >
-            {({ open }) => (
-              <button
-                disabled={!address || isLoading || isSuccess || hasUserVoted}
-                onClick={open}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2 disabled:bg-gray-400 mt-4"
-              >
-                {buttonText}
-              </button>
-            )}
-          </IDKitWidget>
+          <div className="flex justify-center">
+            <IDKitWidget
+              app_id={worldCoinAppId}
+              action="election_vote"
+              signal={address}
+              onSuccess={handleSuccess}
+              credential_types={["orb"] as [CredentialType.Orb]}
+              enableTelemetry
+            >
+              {({ open }) => (
+                <button
+                  disabled={!address || isLoading || isSuccess || hasUserVoted}
+                  onClick={open}
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-xl px-4 py-2 disabled:bg-gray-400 mt-4"
+                >
+                  {buttonText}
+                </button>
+              )}
+            </IDKitWidget>
+          </div>
         </div>
       </div>
     </>

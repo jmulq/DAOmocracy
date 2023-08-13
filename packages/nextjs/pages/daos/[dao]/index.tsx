@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { DAOQueryDocument, DAOQueryQuery, execute } from "../../../.graphclient";
 import { NextPage } from "next";
+import { getDaoImage } from "~~/utils/getDaoImage";
 
 // import { useAccount } from "wagmi";
 // import DAOCard from "~~/components/DAOCard";
@@ -31,9 +32,9 @@ const DAO: NextPage = () => {
       <h1 className="text-2xl font-bold text-left pl-5 mb-8">{dao.name}</h1>
       <div className="flex">
         <div className="w-3/5 flex flex-col justify-center">
-          <Image src="/assets/dao1.png" alt="dao-image" width={500} height={500} />
+          <Image className="rounded-3xl" src={getDaoImage(dao.name)} alt="dao-image" width={500} height={500} />
         </div>
-        <div className=" w-full bg-gray-200 p-12 rounded-lg ml-4 text-left">
+        <div className=" w-full bg-white p-12 rounded-3xl ml-4 text-left">
           <h2 className="text-xl font-semibold mb-10">Recent Proposals</h2>
           {!dao.proposals || dao?.proposals.length === 0 ? (
             <p className="text-gray-600">No proposals available.</p>
@@ -42,7 +43,7 @@ const DAO: NextPage = () => {
               {dao.proposals.map((proposal, index) => (
                 <li
                   key={proposal.id}
-                  className={`p-4 mb-2 cursor-pointer rounded-2xl bg-white hover:bg-gray-100`}
+                  className={`p-4 mb-2 cursor-pointer rounded-3xl bg-white hover:bg-gray-100`}
                   onClick={() => router.push(`/daos/${dao.id}/proposal/${proposal.id}?index=${index}`)}
                 >
                   <div className="flex justify-between items-center">
