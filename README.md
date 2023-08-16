@@ -48,8 +48,8 @@ In this vision, membership in specialised DAOs is not limited to a select few bu
 - Traditional Election Voting
 - DAO of Sub-DAOs Architecture - Unveils a novel framework where specialised DAOs collaborate for more effective governance
 - Decentralised Proposal Creation and Voting - Enables easy proposal submission and voting within sub-DAOs, enhancing democratic engagement
-  On-Chain Verification with Worldcoins World ID - Ensures secure identity validation on-chain, ensuring users can only perform actions a pre-configured amount of times
-  Cross-Chain Voting via Chainlink CCIP - Facilitates cross-chain voting through Chainlink Cross-Chain Interoperability Protocol (CCIP)
+- On-Chain Verification with Worldcoins World ID - Ensures secure identity validation on-chain, ensuring users can only perform actions a pre-configured amount of times
+- Cross-Chain Voting via Chainlink CCIP - Facilitates cross-chain voting through Chainlink Cross-Chain Interoperability Protocol (CCIP)
 
 ## Technologies Used
 
