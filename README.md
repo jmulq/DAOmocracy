@@ -1,5 +1,7 @@
 # DAOMOCRACY
 
+Hackathon Showcase - https://ethglobal.com/showcase/daomocracy-jfdd6
+
 DAOmocracy is a thought experiment reimagining the essence of democracy through a DAO of subDAOs structure. Our vision revolves around a dynamic ecosystem where diverse specialised DAOs contribute to various aspects of governance, such as proposing legislation, funding initiatives, and shaping policies. This novel approach would empower individuals to actively engage in shaping our future while fostering transparency, inclusivity, and effective decentralised decision-making.
 
 We should dare to reimagine the imperfect systems we inherit, envisioning a future where inclusive participation and effective decentralisation shape the democratic landscape.
